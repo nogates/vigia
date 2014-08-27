@@ -1,0 +1,55 @@
+PATH
+  remote: .
+  specs:
+    specapib (0.0.1)
+      colorize
+      rake
+      redsnow
+      rest-client
+      rspec
+
+GEM
+  remote: http://production.cf.rubygems.org/
+  specs:
+    coderay (1.1.0)
+    colorize (0.7.3)
+    diff-lcs (1.2.5)
+    ffi (1.9.3)
+    method_source (0.8.2)
+    mime-types (2.3)
+    netrc (0.7.7)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    rake (10.3.2)
+    redsnow (0.1.2)
+      bundler (~> 1.7.0)
+      ffi (~> 1.9.3)
+      rake (~> 10.3.2)
+      yard (~> 0.8.7.4)
+    rest-client (1.7.2)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
+    rspec (3.0.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+    rspec-core (3.0.4)
+      rspec-support (~> 3.0.0)
+    rspec-expectations (3.0.4)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.0.0)
+    rspec-mocks (3.0.4)
+      rspec-support (~> 3.0.0)
+    rspec-support (3.0.4)
+    slop (3.6.0)
+    yard (0.8.7.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.5)
+  pry
+  specapib!
