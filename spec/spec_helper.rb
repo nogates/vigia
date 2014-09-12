@@ -3,14 +3,28 @@ require 'pry'
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f}
 
-def example_apib
-  RedSnow::parse example_apib_source
-end
+module SpecApib
+  class ExampleTest
+    class << self
+      def apib
+        RedSnow::parse apib_source
+      end
 
-def example_apib_source
-  File.read example_apib_path
-end
+      def apib_source
+        File.read apib_path
+      end
 
-def example_apib_path
-  File.join __dir__, 'example.apib'
+      def apib_path
+        File.join __dir__, 'example.apib'
+      end
+
+      def server
+        SpecApib::ExampleServer
+      end
+
+      def app
+        SpecApib::ExampleApp
+      end
+    end
+  end
 end
