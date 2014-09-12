@@ -1,7 +1,5 @@
 module SpecApib
-
   class Config
-
     attr_accessor :apib_path, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class
 
     def initialize
@@ -18,25 +16,31 @@ module SpecApib
       raise("You have to provide a host value in config or in the Apib") unless host
     end
 
-    def add_custom_examples_on(namespace, examples_name)
-      @custom_examples << { namespace: namespace, examples_name: examples_name }
+    def add_custom_examples_on(filter, name)
+      @custom_examples << { filter: filter, name: name }
     end
 
     def host
       @host || blueprint.metadata['host']
     end
 
-    def custom_examples_for(example)
-      @custom_examples.each_with_object([]) do |custom_example, collection|
-        if custom_example[:namespace] == :all
-          collection << custom_example
-        end # ToDo: Find a way to provide custom examples for each SpecApib Example. Through example.id?
+    def custom_examples_for(specpaib_example)
+      custom_examples.each_with_object([]) do |custom_example, collection|
+        collection << custom_example[:name] if eligible_example?(specpaib_example, custom_example[:filter])
         collection
       end
     end
 
     def blueprint
       @blueprint ||= SpecApib::Blueprint.new(File.read(apib_path))
+    end
+
+    private
+
+    def eligible_example?(specpaib_example, filter)
+      return true if filter == :all
+
+      [ specpaib_example.resource.name, specpaib_example.action.name ].include?(filter)
     end
   end
 end

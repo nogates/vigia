@@ -73,29 +73,60 @@ Retrieve all scenarios.
           ]
         }
 
-### Create a Scenario [POST]
-Create a Scenario.
+### Create Scenarios [POST]
+Create one or more scenarios.
 
 + Request (application/json)
 
         {
           "name": "Scenario number three",
           "address": "Only there"
+        },
+        {
+          "name": "Scenario number four",
+          "address": "No! There is one more"
         }
 
-+ Response 201 (application/vnd.siren+json; charset=utf-8)
 
++ Response 201 (application/vnd.siren+json; charset=utf-8)
         {
-          "class" : ["scenario"],
-          "properties" : {
-            "names" : [{ "text" : "Scenario number three" }],
-            "address" : "Only there",
-            "slug" : "scenario_three"
-          },
-          "links" : [
+          "class" : ["scenarios", "collection"],
+          "entities" : [
             {
-              "rel" : ["self"],
-              "href" : "http://examples.com/scenarios/number_three"
+              "class": [ "scenario" ],
+              "properties": {
+                "names": [{ "text": "Scenario number three" }],
+                "address": "Only there",
+                "slug": "number_three"
+              },
+              "links": [
+                {
+                  "rel": ["self"],
+                  "href": "http://example.com/scenarios/number_three"
+                }
+              ],
+              "rel": ["item"]
+            },
+            {
+              "class": [ "scenario" ],
+              "properties": {
+                "names": [{ "text": "Scenario number four" }],
+                "address": "No! There is one more",
+                "slug": "number_four"
+              },
+              "links": [
+                {
+                  "rel": ["self"],
+                  "href": "http://example.com/scenarios/number_four"
+                }
+              ],
+              "rel": ["item"]
+            }
+          ],
+          "links":[
+            {
+              "rel": ["self"],
+              "href": "http://example.com/scenarios"
             }
           ]
         }

@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe SpecApib::Config do
 
+  include_examples "redsnow doubles"
+
   describe '::initialize' do
     context 'when accessing properties' do
       it 'has an apib_path getter with default value' do
@@ -104,7 +106,70 @@ describe SpecApib::Config do
     end
 
     it 'stores a custom_example reference into @custom_examples' do
-      expect(subject.custom_examples).to include { namespace:all, examples_name: 'the shared examples' }
+      expect(subject.custom_examples).to include(filter: :all, name: 'the shared examples')
+    end
+  end
+
+  describe '#custom_examples_for' do
+    let(:specapib_example) do
+      instance_double(
+        SpecApib::Example,
+        resource: resource,
+        action: action
+      )
+    end
+    let(:custom_examples) { [] }
+
+    before do
+      allow(subject).to receive(:custom_examples).and_return(custom_examples)
+    end
+
+    context 'when the custom example filter is :all' do
+      let(:custom_examples) { [ { filter: :all, name: 'include me please' } ] }
+
+      it 'includes the example in the response no matter what' do
+         expect(subject.custom_examples_for(specapib_example)).to include('include me please')
+      end
+    end
+    context 'when the custom example filter matchs the the action name' do
+      let(:custom_examples) { [ { filter: 'Name the action', name: 'included by action name' } ] }
+      let(:action_name)     { 'Name the action' }
+
+      it 'includes the example in the response' do
+         expect(subject.custom_examples_for(specapib_example)).to include('included by action name')
+      end
+    end
+    context 'when the custom example filter matchs the resource name' do
+      let(:custom_examples) { [ { filter: 'Name the resource', name: 'included by resource name' } ] }
+      let(:resource_name)   { 'Name the resource' }
+
+      it 'includes the example in the response' do
+         expect(subject.custom_examples_for(specapib_example)).to include('included by resource name')
+      end
+    end
+    context 'when the filter does not match the action or the resource name and it is not :all' do
+      let(:custom_examples) { [ { filter: 'Impossible filter', name: 'not to be included' } ] }
+
+      it 'includes the example in the response' do
+         expect(subject.custom_examples_for(specapib_example)).not_to include('not to be included')
+      end
+    end
+
+    context 'when mixing several cases' do
+      let(:custom_examples) do
+        [
+          { filter: :all,          name: 'i am in' },
+          { filter: 'aaaaaction',  name: 'm2' },
+          { filter: 'resssourrce', name: 'and me!!' },
+          { filter: 'ooopppsss',   name: 'I shouldnt' }
+        ]
+      end
+      let(:action_name)     { 'aaaaaction' }
+      let(:resource_name)   { 'resssourrce' }
+
+      it 'includes the right examples in the response' do
+        expect(subject.custom_examples_for(specapib_example)).to contain_exactly('i am in', 'm2', 'and me!!')
+      end
     end
   end
 

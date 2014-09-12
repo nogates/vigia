@@ -3,10 +3,15 @@ shared_examples "redsnow doubles" do
   let(:resource) do
     instance_double(
       RedSnow::Resource,
+      name: resource_name,
       parameters: resource_parameters,
       uri_template: resource_uri_template,
       model: resource_model
     )
+  end
+
+  let(:resource_name) do
+    'My resource name'
   end
 
   let(:resource_uri_template) do
@@ -19,15 +24,15 @@ shared_examples "redsnow doubles" do
       headers: resource_model_headers
     )
   end
-  
+
   let(:resource_model_headers) do
     instance_double(
       RedSnow::Headers,
       collection: resource_model_headers_collection
     )
   end
-  
-  
+
+
   let(:resource_model_headers_collection) do
     [ {name: 'Resource-Model-Header', value: 'A Resource Model Header' } ]
   end
@@ -38,7 +43,7 @@ shared_examples "redsnow doubles" do
       collection: [resource_parameter_one]
     )
   end
-  
+
   let(:resource_parameter_one) do
     instance_double(
       RedSnow::Parameter,
@@ -87,11 +92,11 @@ shared_examples "redsnow doubles" do
   let(:payload_name) do
     '100'
   end
-  
-  let(:payload_body) do 
+
+  let(:payload_body) do
     'Payload body'
   end
-  
+
   let(:payload_headers) do
     instance_double(
       RedSnow::Headers,
@@ -106,7 +111,13 @@ shared_examples "redsnow doubles" do
   let(:action) do
     instance_double(
       RedSnow::Action,
-      parameters: action_parameters)
+      name: action_name,
+      parameters: action_parameters
+    )
+  end
+
+  let(:action_name) do
+    'My action name'
   end
 
   let(:action_parameters) do
