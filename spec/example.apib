@@ -16,7 +16,7 @@ Retrieve all scenarios.
     + page (string, `1`) ... Page result number.
     + sort (string, `name`) ... Attribute to sort by.
 
-    
+
 + Response 200 (application/vnd.siren+json; charset=utf-8)
 
         {
@@ -26,8 +26,8 @@ Retrieve all scenarios.
               "class": [ "scenario" ],
               "properties": {
                 "names": [{ "text": "Scenario number one" }],
-                "address": 'Here and there',
-                "slug": 'number_one'
+                "address": "Here and there",
+                "slug": "number_one"
               },
               "links": [
                 {
@@ -41,8 +41,8 @@ Retrieve all scenarios.
               "class": [ "scenario" ],
               "properties": {
                 "names": [{ "text": "Scenario number two" }],
-                "address": 'Here but not there',
-                "slug": 'number_two'
+                "address": "Here but not there",
+                "slug": "number_two"
               },
               "links": [
                 {
@@ -126,7 +126,7 @@ Retrieve a Scenario.
                 }
               ]
             }
-            
+
 # Group Steps
 
 ## Steps [/scenarios/{scenario_slug}/steps{?number}]
@@ -136,7 +136,7 @@ This resource represents a collection of Scenario's Steps.
 Retrieve all POIs
 
 + Parameters
-    + scenario_slug (string, `scenario_one`) ... Scenario slug 
+    + scenario_slug (string, `scenario_one`) ... Scenario slug
     + number (string, `10`) ... Amount of steps to show.
 
 + Response 200 (application/vnd.siren+json; charset=utf-8)
@@ -145,7 +145,7 @@ Retrieve all POIs
           "class": [ "steps", "collection" ],
           "entities": [
             {
-              "class": [ "step", ],
+              "class": [ "step" ],
               "properties": {
                 "id" : 1,
                 "name": "Initial Step",
@@ -154,7 +154,7 @@ Retrieve all POIs
               "links": [
                 {
                   "rel": [ "self" ],
-                  "href": "http://example.com/scenarios/scenario_one/steps/1
+                  "href": "http://example.com/scenarios/scenario_one/steps/1"
                 }
               ],
               "rel": [ "item" ]
@@ -173,7 +173,7 @@ Retrieve all POIs
 Create a Step
 
 + Parameters
-    + scenario_slug (string, `scenario_one`) ... Scenario slug 
+    + scenario_slug (string, `scenario_one`) ... Scenario slug
 
 + Request (application/json)
 
@@ -207,7 +207,7 @@ Update a Step
 
 + Parameters
     + scenario_slug (string, `scenario_one`) ... Scenario slug
-    + id (integer, 2) ... An unique identifier of the Step.
+    + id (required,number,`2`) ... An unique identifier of the Step.
 
 
 + Request (application/json)
@@ -240,7 +240,7 @@ Update a Step
 Delete a Step
 
 + Parameters
-    + scenario_slug (string, `scenario_one`) ... Scenario slug
-    + id (integer, 2) ... An unique identifier of the Step.
+    + scenario_slug (required, string, `scenario_one`) ... Scenario slug
+    + id (required,number,`2`) ... An unique identifier of the Step.
 
 + Response 204
