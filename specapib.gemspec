@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = ''
   spec.license       = 'MIT'
 
-  spec.files         = Dir['Gemfile', 'Rakefile', 'lib/tasks/specapib.rake', 'lib/**/*.rb', '*.md']
+  spec.files         = Dir['Gemfile', 'lib/**/*.rb', '*.md']
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = %w(lib)
 
@@ -24,6 +24,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rspec'
 
   spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'sinatra'
+  spec.add_development_dependency 'celluloid'
+  spec.add_development_dependency 'json'
   spec.add_development_dependency 'pry-debugger'
 end
 
