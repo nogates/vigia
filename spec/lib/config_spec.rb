@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SpecApib::Config do
-  
+
   describe '::initialize' do
     context 'when accessing properties' do
       it 'has an apib_path getter with default value' do
@@ -24,13 +24,13 @@ describe SpecApib::Config do
       end
     end
   end
-  
+
   describe 'validate!' do
     context 'validating apib_path' do
       before do
         allow(subject).to receive(:host).and_return('exists')
       end
-        
+
       context 'when @apib_path is empty' do
         it 'raises an error' do
           expect { subject.validate! }.to raise_error
@@ -48,7 +48,7 @@ describe SpecApib::Config do
         allow(subject).to receive(:host).and_return(host)
         subject.apib_path = 'a_path'
       end
-      
+
       context 'when host is nil' do
         let(:host) { nil }
         it 'raises an exception' do
@@ -63,18 +63,18 @@ describe SpecApib::Config do
       end
     end
   end
-  
+
   describe '#host' do
     let(:blueprint_host) { 'a blueprint host' }
     let(:blueprint_metadata) { instance_double(RedSnow::Metadata, '[]' => blueprint_host) }
     let(:blueprint) { instance_double(SpecApib::Blueprint, metadata: blueprint_metadata) }
-      
+
     before do
       allow(subject).to receive(:blueprint).and_return(blueprint)
       subject.host = host_value
       subject.host
     end
-    
+
     context 'when @host is not empty' do
       let(:host_value) { 'a @ host' }
       it 'uses @host value' do
@@ -97,7 +97,7 @@ describe SpecApib::Config do
       end
     end
   end
-  
+
   describe '#add_custom_examples_on' do
     before do
       subject.add_custom_examples_on :all, 'the shared examples'
@@ -107,26 +107,26 @@ describe SpecApib::Config do
       expect(subject.custom_examples).to include { namespace:all, examples_name: 'the shared examples' }
     end
   end
-  
+
   describe '#blueprint' do
     let(:blueprint) { instance_double(SpecApib::Blueprint) }
     let(:blueprint_source) { 'the blueprint source' }
-    
+
     before do
       allow(File).to receive(:read).and_return(blueprint_source)
       allow(SpecApib::Blueprint).to receive(:new).and_return(blueprint)
     end
-    
+
     context 'when its being called for the first time' do
       before do
         subject.blueprint
       end
-      
+
       it 'generates a new SpecApib::Blueprint instance' do
         expect(SpecApib::Blueprint).to have_received(:new).with(blueprint_source).once
       end
     end
-    
+
     context 'when its being called more than once' do
       before do
         subject.blueprint

@@ -11,7 +11,7 @@ shared_examples 'apib example' do |runner_example|
         let!(:result)        { runner_example.perform_request(response) }
 
         it 'returns the expected HTTP code' do
-          expect(result[:code]).to eql(expectations[:code]), 
+          expect(result[:code]).to eql(expectations[:code]),
             -> { format_error(result, expectations) }
         end
 
@@ -22,8 +22,8 @@ shared_examples 'apib example' do |runner_example|
 
         if runner_example.custom_examples.any?
           context 'when running custom rspec examples' do
-            runner_example.custom_examples.each do |custom_example|
-              include_examples custom_example[:examples_name], runner_example, response
+            runner_example.custom_examples.each do |example_name|
+              include_examples example_name, runner_example, response
             end
           end
         end
