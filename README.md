@@ -3,7 +3,11 @@ SpecApib
 
 # What is it?
 
-SpecApib is a gem to perform integration test within RSpec framework.
+SpecApib is a gem to perform integration test within RSpec framework using a compatible
+[Api Blueprint](https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md) definition file. It uses [RedSnow]() to parse the Api Blueprint file and RestClient as http client to perform the requests.
+
+SpecApib runs by default only two comparision between the blueprint file and the server response. The Http response code and the inclusion of the blueprint headers inside the headers response.
+
 
 # Installation
 
@@ -23,9 +27,9 @@ Run bundle install
 $ bundle install
 ```
 
-SpecApin can now be used inside your application.
+SpecApib can now be used inside your application.
 
-# Configuration
+# Getting started
 
 SpecApib provides an easy way to configure the parameters of the test
 
@@ -43,10 +47,11 @@ SpecApib.configure do |config|
   config.custom_examples_paths = [ "#{ Rails.root }/spec/apibs" ]
 
   # Add custom examples for the apib.
-  # config.add_custom_examples_on(:all, 'my custom examples')
+  config.add_custom_examples_on(:all, 'my custom examples')
 
-  # Includes a collection of custom headers in the requests.
-  # config.headers = {}
+  # Includes a collection of custom headers in all the requests.
+  config.headers = { authorization: 'Bearer <your hash here>' }
+
 end
 
 ```
@@ -63,8 +68,10 @@ namespace :spec do
   desc 'Run SpecApib tests'
   task :specapib => :environment do
 
+    # start rails server by the easiest way
     system("bundle exec rails s -e #{ Rails.env } -d")
-    sleep 10 # give some time to the server to start
+    # give some time to the server
+    sleep 10
 
     SpecApib.configure do |config|
       config.apib_path = "#{ Rails.root }/apibs/my_api.apib"
@@ -76,3 +83,59 @@ namespace :spec do
   end
 end
 ```
+
+## Custom examples
+
+SpecApib allows to include custom rspec examples in the test using some options in the config
+
+```ruby
+
+SpecApib.configure do |config|
+  # Define where your examples are located
+  config.custom_examples_paths = [ '/my_project/shared_examples/apib_examples.rb' ]
+
+  # Define the custom examples you want to include in your test
+
+  # To the example in all your request use `:all` symbol
+  config.add_custom_examples_on(:all, 'my custom examples')
+
+  # You can specify the name of an action or a resource. Only the requests which belong to that
+  # resource or action will run these shared examples
+  config.add_custom_examples_on('Create an Image', 'create image examples')
+
+end
+```
+
+Then, create your Rspec shared example and name the examples accordingly
+
+```ruby
+# /my_project/shared_examples/apib_examples.rb
+
+shared_examples 'my custom examples' do |specapib_example, response|
+  it 'is a valid json response' do
+    expect { JSON.parse(result[:body]) }.not_to raise_error
+  end
+end
+
+shared_examples 'create image examples' do |specapib_example, response|
+  before do
+    @json_result = JSON.parse(result[:body])
+    @json_expectation = JSON.parse(expectations[:body])
+  end
+
+  it 'has the expected link to the image' do |specapib_example, response|
+    expect(@json_result['image']['link']).to eql(@json_expectation['image']['link'])
+  end
+end
+```
+
+# ToDo
+
+ - [ ] SpecApib::Example defines each Api Blueprint transactional example, but each example can have several responses (200, 404, etc.). Think a better way to handle this instead of passing the response variable across methods.
+
+ - [ ] Spike: Do we need to set RSpec specific options? (SpecApib::Rspec)
+
+ - [ ] Parse http client exceptions properly. (done?)
+
+ - [ ] Support custom http client through config. (low priority)
+
