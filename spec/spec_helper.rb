@@ -1,9 +1,9 @@
-require 'specapib'
+require 'vigia'
 require 'pry'
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f}
 
-module SpecApib
+module Vigia
   class ExampleTest
     class << self
       def apib
@@ -19,11 +19,11 @@ module SpecApib
       end
 
       def server
-        SpecApib::ExampleServer
+        Vigia::ExampleServer
       end
 
       def app
-        SpecApib::ExampleApp
+        Vigia::ExampleApp
       end
     end
   end

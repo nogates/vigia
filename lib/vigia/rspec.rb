@@ -1,8 +1,8 @@
-module SpecApib
+module Vigia
   class Rspec
     class << self
       def apib
-        SpecApib.config.blueprint.apib
+        Vigia.config.blueprint.apib
       end
 
       def include_shared_folders
@@ -13,19 +13,19 @@ module SpecApib
 
       private
       def require_custom_examples
-        if SpecApib.config.custom_examples_paths
-          [ *SpecApib.config.custom_examples_paths ].sort.each do |example_file|
+        if Vigia.config.custom_examples_paths
+          [ *Vigia.config.custom_examples_paths ].sort.each do |example_file|
             require example_file
           end
         end
       end
     end
 
-    # Run `SpecApib.spec_folder` spec file
+    # Run `Vigia.spec_folder` spec file
     def run!
       with_options do
         RSpec::Core::Runner::run(
-          [ SpecApib.spec_folder ], $stderr, $stdout)
+          [ Vigia.spec_folder ], $stderr, $stdout)
       end
     end
 

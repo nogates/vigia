@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SpecApib::Headers do
+describe Vigia::Headers do
 
   include_examples "redsnow doubles"
 
@@ -14,19 +14,19 @@ describe SpecApib::Headers do
 
   let(:config_headers) { { default: 'nah' } }
 
-  let(:config) { instance_double(SpecApib::Config, headers: config_headers) }
+  let(:config) { instance_double(Vigia::Config, headers: config_headers) }
 
   subject do
     described_class.new resource
   end
 
   before do
-    allow(SpecApib).to receive(:config).and_return(config)
+    allow(Vigia).to receive(:config).and_return(config)
   end
 
   describe '#initialize' do
-    it 'creates a new SpecApib::Headers instance' do
-      expect(subject).to be_a(SpecApib::Headers)
+    it 'creates a new Vigia::Headers instance' do
+      expect(subject).to be_a(Vigia::Headers)
     end
   end
 

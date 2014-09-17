@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-describe SpecApib::Rspec do
+describe Vigia::Rspec do
 
   described_class.include_shared_folders
 
@@ -11,7 +11,7 @@ describe SpecApib::Rspec do
           resource.actions.each do |action|
             describe description_for(action) do
               action.examples.each do |apib_example|
-                runner_example  = SpecApib::Example.new(
+                runner_example  = Vigia::Example.new(
                                     resource: resource,
                                     action: action,
                                     apib_example: apib_example)

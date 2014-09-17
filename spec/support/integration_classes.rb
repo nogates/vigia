@@ -2,7 +2,7 @@ require 'celluloid/autostart'
 require 'sinatra/base'
 require 'json'
 
-module SpecApib
+module Vigia
 
   # Execute Sinatra App in background
   class ExampleServer
@@ -18,37 +18,37 @@ module SpecApib
     get '/scenarios' do
       status 200
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios']
+      Vigia::ExampleFixtures['/scenarios']
     end
     post '/scenarios' do
       status 201
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios_create']
+      Vigia::ExampleFixtures['/scenarios_create']
     end
     get '/scenarios/:scenario_slug' do
       status 200
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios/scenario_one']
+      Vigia::ExampleFixtures['/scenarios/scenario_one']
     end
     get '/scenarios/:scenario_slug/steps' do
       status 200
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios/steps']
+      Vigia::ExampleFixtures['/scenarios/steps']
     end
     post '/scenarios/:scenario_slug/steps' do
       status 201
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios/steps_create']
+      Vigia::ExampleFixtures['/scenarios/steps_create']
     end
     put '/scenarios/:scenario_slug/steps/:id' do
       status 201
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios/steps_update']
+      Vigia::ExampleFixtures['/scenarios/steps_update']
     end
     delete '/scenarios/:scenario_slug/steps/:id' do
       status 204
       content_type 'application/vnd.siren+json; charset=utf-8'
-      SpecApib::ExampleFixtures['/scenarios/steps_delete']
+      Vigia::ExampleFixtures['/scenarios/steps_delete']
     end
 
     def self.host
@@ -128,10 +128,10 @@ module SpecApib
       end
 
       def steps_resource
-        SpecApib::ExampleTest.apib.ast.resource_groups.last
+        Vigia::ExampleTest.apib.ast.resource_groups.last
       end
       def scenarios_resource
-        SpecApib::ExampleTest.apib.ast.resource_groups.first
+        Vigia::ExampleTest.apib.ast.resource_groups.first
       end
     end
   end

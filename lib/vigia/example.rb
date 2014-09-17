@@ -1,4 +1,4 @@
-module SpecApib
+module Vigia
   class Example
 
     attr_reader :action, :resource, :apib_example, :requests, :headers
@@ -9,8 +9,8 @@ module SpecApib
       @apib_example = apib_example
       @error        = []
       @requests     = {}
-      @headers      = SpecApib::Headers.new(resource)
-      @url          = SpecApib::Url.new(
+      @headers      = Vigia::Headers.new(resource)
+      @url          = Vigia::Url.new(
                         uri_template: resource.uri_template,
                         parameters:   parameters)
     end
@@ -36,7 +36,7 @@ module SpecApib
     end
 
     def custom_examples
-      SpecApib.config.custom_examples_for(self)
+      Vigia.config.custom_examples_for(self)
     end
 
     private
@@ -55,7 +55,7 @@ module SpecApib
     end
 
     def http_client_request(http_options)
-      instance = SpecApib.config.http_client_class.new(http_options)
+      instance = Vigia.config.http_client_class.new(http_options)
       instance.run!
     end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SpecApib::Config do
+describe Vigia::Config do
 
   include_examples "redsnow doubles"
 
@@ -22,7 +22,7 @@ describe SpecApib::Config do
         expect(subject.custom_examples_paths).to eql([])
       end
       it 'has a http_client_class getter with default value' do
-        expect(subject.http_client_class).to eql(SpecApib::HttpClient::RestClient)
+        expect(subject.http_client_class).to eql(Vigia::HttpClient::RestClient)
       end
     end
   end
@@ -69,7 +69,7 @@ describe SpecApib::Config do
   describe '#host' do
     let(:blueprint_host) { 'a blueprint host' }
     let(:blueprint_metadata) { instance_double(RedSnow::Metadata, '[]' => blueprint_host) }
-    let(:blueprint) { instance_double(SpecApib::Blueprint, metadata: blueprint_metadata) }
+    let(:blueprint) { instance_double(Vigia::Blueprint, metadata: blueprint_metadata) }
 
     before do
       allow(subject).to receive(:blueprint).and_return(blueprint)
@@ -111,9 +111,9 @@ describe SpecApib::Config do
   end
 
   describe '#custom_examples_for' do
-    let(:specapib_example) do
+    let(:vigia_example) do
       instance_double(
-        SpecApib::Example,
+        Vigia::Example,
         resource: resource,
         action: action
       )
@@ -128,7 +128,7 @@ describe SpecApib::Config do
       let(:custom_examples) { [ { filter: :all, name: 'include me please' } ] }
 
       it 'includes the example in the response no matter what' do
-         expect(subject.custom_examples_for(specapib_example)).to include('include me please')
+         expect(subject.custom_examples_for(vigia_example)).to include('include me please')
       end
     end
     context 'when the custom example filter matchs the the action name' do
@@ -136,7 +136,7 @@ describe SpecApib::Config do
       let(:action_name)     { 'Name the action' }
 
       it 'includes the example in the response' do
-         expect(subject.custom_examples_for(specapib_example)).to include('included by action name')
+         expect(subject.custom_examples_for(vigia_example)).to include('included by action name')
       end
     end
     context 'when the custom example filter matchs the resource name' do
@@ -144,14 +144,14 @@ describe SpecApib::Config do
       let(:resource_name)   { 'Name the resource' }
 
       it 'includes the example in the response' do
-         expect(subject.custom_examples_for(specapib_example)).to include('included by resource name')
+         expect(subject.custom_examples_for(vigia_example)).to include('included by resource name')
       end
     end
     context 'when the filter does not match the action or the resource name and it is not :all' do
       let(:custom_examples) { [ { filter: 'Impossible filter', name: 'not to be included' } ] }
 
       it 'includes the example in the response' do
-         expect(subject.custom_examples_for(specapib_example)).not_to include('not to be included')
+         expect(subject.custom_examples_for(vigia_example)).not_to include('not to be included')
       end
     end
 
@@ -168,18 +168,18 @@ describe SpecApib::Config do
       let(:resource_name)   { 'resssourrce' }
 
       it 'includes the right examples in the response' do
-        expect(subject.custom_examples_for(specapib_example)).to contain_exactly('i am in', 'm2', 'and me!!')
+        expect(subject.custom_examples_for(vigia_example)).to contain_exactly('i am in', 'm2', 'and me!!')
       end
     end
   end
 
   describe '#blueprint' do
-    let(:blueprint) { instance_double(SpecApib::Blueprint) }
+    let(:blueprint) { instance_double(Vigia::Blueprint) }
     let(:blueprint_source) { 'the blueprint source' }
 
     before do
       allow(File).to receive(:read).and_return(blueprint_source)
-      allow(SpecApib::Blueprint).to receive(:new).and_return(blueprint)
+      allow(Vigia::Blueprint).to receive(:new).and_return(blueprint)
     end
 
     context 'when its being called for the first time' do
@@ -187,8 +187,8 @@ describe SpecApib::Config do
         subject.blueprint
       end
 
-      it 'generates a new SpecApib::Blueprint instance' do
-        expect(SpecApib::Blueprint).to have_received(:new).with(blueprint_source).once
+      it 'generates a new Vigia::Blueprint instance' do
+        expect(Vigia::Blueprint).to have_received(:new).with(blueprint_source).once
       end
     end
 
@@ -198,8 +198,8 @@ describe SpecApib::Config do
         subject.blueprint
       end
 
-      it 'returns the SpecApib::Blueprint instance' do
-        expect(SpecApib::Blueprint).to have_received(:new).with(blueprint_source).once
+      it 'returns the Vigia::Blueprint instance' do
+        expect(Vigia::Blueprint).to have_received(:new).with(blueprint_source).once
       end
     end
   end

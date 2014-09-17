@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-module SpecApib
+module Vigia
   class Blueprint
 
     attr_reader :apib, :metadata

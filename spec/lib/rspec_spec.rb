@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe SpecApib::Rspec do
+describe Vigia::Rspec do
 
   describe '#run!' do
     before do
       allow(RSpec::Core::Runner).to receive(:run)
-      allow(SpecApib).to receive(:spec_folder).and_return('spec_folder')
+      allow(Vigia).to receive(:spec_folder).and_return('spec_folder')
       subject.run!
     end
 

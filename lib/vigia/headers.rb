@@ -1,19 +1,19 @@
-module SpecApib
+module Vigia
   class Headers
-    
+
     # ToDo: resource should be an instance variable
     def initialize(resource)
       @resource = resource
     end
-    
+
     def expected(response)
       compile_headers(headers_for_response(response))
     end
-    
+
     def http_client(response)
       compile_headers(headers_for_response(response)).merge(config_headers)
     end
-    
+
     def http_client_with_payload(response, payload)
       compile_headers(headers_for_response_and_payload(response, payload)).merge(config_headers)
     end
@@ -29,7 +29,7 @@ module SpecApib
     end
 
     def config_headers
-      SpecApib.config.headers
+      Vigia.config.headers
     end
 
     def headers_for_response(response)
@@ -38,7 +38,7 @@ module SpecApib
       collection << [*response.headers.collection]
       collection.flatten
     end
-    
+
     def headers_for_response_and_payload(response, payload)
       collection = headers_for_response(response)
       collection << [*payload.headers.collection]

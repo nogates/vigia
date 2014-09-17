@@ -1,22 +1,22 @@
 require 'spec_helper'
 
-describe SpecApib::Example do
-  
-  include_examples "redsnow doubles" 
-  
-  let(:uri_template)          { instance_double(SpecApib::Url, to_s: '') }
+describe Vigia::Example do
+
+  include_examples "redsnow doubles"
+
+  let(:uri_template)          { instance_double(Vigia::Url, to_s: '') }
   let(:resource_uri_template) { '/scenarios/default' }
   let(:http_client_result) { {code: 200, headers: {}, body: 'the body' } }
-  
+
   subject do
-    allow(SpecApib::Url).to receive(:new).and_return(uri_template)
-    described_class.new( 
+    allow(Vigia::Url).to receive(:new).and_return(uri_template)
+    described_class.new(
       resource: resource,
       action: action,
       apib_example: apib_example
     )
   end
-  
+
   describe '#initialize' do
     it '#attr_reader :resource' do
       expect(subject.resource).to be(resource)
@@ -35,14 +35,14 @@ describe SpecApib::Example do
         uri_template: resource_uri_template,
         parameters: [resource_parameter_one, action_parameter_one]
       }
-      expect(SpecApib::Url).to receive(:new)
+      expect(Vigia::Url).to receive(:new)
         .with(uri_template_options).once
       subject
     end
   end
 
   describe '#perform_request' do
-    let(:response) { instance_double(RedSnow::Payload, name: 'specapib') }
+    let(:response) { instance_double(RedSnow::Payload, name: 'vigia') }
     let(:requests) { {} }
 
     before do
@@ -65,13 +65,13 @@ describe SpecApib::Example do
       end
 
       it 'includes the request in the requests hash' do
-        expect(subject.requests['specapib']).to eql(http_client_result)
+        expect(subject.requests['vigia']).to eql(http_client_result)
       end
     end
 
     context 'when the request has been performed yet' do
       before do
-        subject.instance_variable_set("@requests", { 'specapib' => 'the cached response' })
+        subject.instance_variable_set("@requests", { 'vigia' => 'the cached response' })
         subject.perform_request(response)
       end
 
@@ -84,11 +84,11 @@ describe SpecApib::Example do
       end
 
       it 'includes the request in the requests hash' do
-        expect(subject.requests['specapib']).to eql('the cached response')
+        expect(subject.requests['vigia']).to eql('the cached response')
       end
     end
   end
-  
+
   describe '#expectations_for' do
     let(:expectations) { subject.expectations_for(response) }
     let(:expected_response_name) { '200' }
@@ -117,7 +117,7 @@ describe SpecApib::Example do
       expect(expectations[:body]).to eql('The expected body')
     end
   end
-  
+
   describe '#compile_url' do
     it 'calls to_s on uri_template' do
       subject.compile_url

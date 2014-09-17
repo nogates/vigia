@@ -1,4 +1,4 @@
-module SpecApib
+module Vigia
   module HttpClient
     class RestClient
       attr_accessor :code, :headers, :body

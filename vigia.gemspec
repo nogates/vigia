@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'specapib/version'
+require 'vigia/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'specapib'
-  spec.version       = SpecApib::VERSION
+  spec.name          = 'vigia'
+  spec.version       = Vigia::VERSION
   spec.authors       = ['atlas2ninjas']
   spec.email         = ['atlas2ninjas@lonelyplanet.com.au']
   spec.summary       = %q{Test your Apiary Blueprint specification on ruby}

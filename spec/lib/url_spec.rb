@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SpecApib::Url do
+describe Vigia::Url do
 
   include_examples "redsnow doubles"
 
@@ -28,15 +28,15 @@ describe SpecApib::Url do
   end
 
   describe '#host' do
-    let(:config) { instance_double(SpecApib::Config, host: 'the_host') }
+    let(:config) { instance_double(Vigia::Config, host: 'the_host') }
 
     before do
-      allow(SpecApib).to receive(:config).and_return(config)
+      allow(Vigia).to receive(:config).and_return(config)
     end
 
-    it 'calls the SpecApib.config.host to get the host value' do
+    it 'calls the Vigia.config.host to get the host value' do
       subject.host
-      expect(SpecApib).to have_received(:config)
+      expect(Vigia).to have_received(:config)
     end
 
     it 'returns the proper value' do

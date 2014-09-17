@@ -1,4 +1,4 @@
-module SpecApib
+module Vigia
   class Url
 
     def initialize(uri_template:, parameters:)
@@ -14,7 +14,7 @@ module SpecApib
     end
 
     def host
-      SpecApib.config.host
+      Vigia.config.host
     end
 
     def modify_query_parameters(url)

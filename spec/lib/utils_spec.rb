@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-require_relative '../../lib/specapib/spec/support/utils'
+require_relative '../../lib/vigia/spec/support/utils'
 
 describe 'Utils methods' do
   describe '#description_for' do
     context 'when object is a RedSnow::ResourceGroup' do
       let(:object) do
-        SpecApib::ExampleTest.apib.ast.resource_groups.first
+        Vigia::ExampleTest.apib.ast.resource_groups.first
       end
       it 'returns the proper description' do
         expect(description_for(object)).to eql('Resource Group: Scenarios')
@@ -14,7 +14,7 @@ describe 'Utils methods' do
     end
     context 'when object is a RedSnow::Resource' do
       let(:object) do
-        SpecApib::ExampleTest.apib.ast.resource_groups.first.resources.first
+        Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first
       end
       it 'returns the proper description' do
         expect(description_for(object)).to eql('Resource: Scenarios (/scenarios{?page,sort})')
@@ -22,7 +22,7 @@ describe 'Utils methods' do
     end
     context 'when object is a RedSnow::Action' do
       let(:object) do
-        SpecApib::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first
+        Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first
       end
       it 'returns the proper description' do
         expect(description_for(object)).to eql('Action: Retrieve all Scenarios (GET)')
@@ -30,7 +30,7 @@ describe 'Utils methods' do
     end
     context 'when object is a RedSnow::Payload' do
       let(:object) do
-        SpecApib::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first.examples.first.responses.first
+        Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first.examples.first.responses.first
       end
       it 'returns the proper description' do
         expect(description_for(object)).to eql('Response: 200')

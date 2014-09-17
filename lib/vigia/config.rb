@@ -1,4 +1,4 @@
-module SpecApib
+module Vigia
   class Config
     attr_accessor :apib_path, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class
 
@@ -8,7 +8,7 @@ module SpecApib
       @headers               = {}
       @custom_examples_paths = []
       @custom_examples       = []
-      @http_client_class     = SpecApib::HttpClient::RestClient
+      @http_client_class     = Vigia::HttpClient::RestClient
     end
 
     def validate!
@@ -32,7 +32,7 @@ module SpecApib
     end
 
     def blueprint
-      @blueprint ||= SpecApib::Blueprint.new(File.read(apib_path))
+      @blueprint ||= Vigia::Blueprint.new(File.read(apib_path))
     end
 
     private

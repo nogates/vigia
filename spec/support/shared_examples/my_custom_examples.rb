@@ -1,5 +1,5 @@
 # This share example runs in all requests
-shared_examples 'my custom examples' do |_specapib_example, response|
+shared_examples 'my custom examples' do |_vigia_example, response|
   if (200..201).include?(response.name.to_i)
     it 'is a valid json response' do
       expect { JSON.parse(result[:body]) }.not_to raise_error
@@ -15,7 +15,7 @@ shared_examples 'my custom examples' do |_specapib_example, response|
 end
 
 # This share example runs only in Scenarios Resource requests
-shared_examples 'scenarios resource examples' do |_specapib_example, response|
+shared_examples 'scenarios resource examples' do |_vigia_example, response|
   before do
     @json_result = JSON.parse(result[:body])
   end
@@ -25,7 +25,7 @@ shared_examples 'scenarios resource examples' do |_specapib_example, response|
 end
 
 # This share example runs only in get /scenarios get action
-shared_examples 'scenarios get index action examples' do |_specapib_example, response|
+shared_examples 'scenarios get index action examples' do |_vigia_example, response|
   before do
     @json_result = JSON.parse(result[:body])
   end
