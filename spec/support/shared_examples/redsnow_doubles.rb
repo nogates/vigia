@@ -4,6 +4,7 @@ shared_examples "redsnow doubles" do
     instance_double(
       RedSnow::Resource,
       name: resource_name,
+      description: resource_description,
       parameters: resource_parameters,
       uri_template: resource_uri_template,
       model: resource_model
@@ -12,6 +13,10 @@ shared_examples "redsnow doubles" do
 
   let(:resource_name) do
     'My resource name'
+  end
+
+  let(:resource_description) do
+    'My resource description'
   end
 
   let(:resource_uri_template) do
@@ -112,12 +117,17 @@ shared_examples "redsnow doubles" do
     instance_double(
       RedSnow::Action,
       name: action_name,
+      description: action_description,
       parameters: action_parameters
     )
   end
 
   let(:action_name) do
     'My action name'
+  end
+
+  let(:action_description) do
+    'My action description'
   end
 
   let(:action_parameters) do

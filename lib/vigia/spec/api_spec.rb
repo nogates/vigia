@@ -16,7 +16,11 @@ describe Vigia::Rspec do
                                     action: action,
                                     apib_example: apib_example)
 
-                include_examples 'apib example', runner_example
+                if runner_example.skip?
+                  include_examples 'skip example', runner_example
+                else
+                  include_examples 'apib example', runner_example
+                end
               end
             end
           end

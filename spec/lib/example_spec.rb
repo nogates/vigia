@@ -124,4 +124,28 @@ describe Vigia::Example do
       expect(uri_template).to have_received(:to_s)
     end
   end
+
+  describe '#skip?' do
+    context 'when resource description includes @skip' do
+      let(:resource_description) { 'Skip this resource @skip' }
+      it 'returns true' do
+        expect(subject.skip?).to be_truthy
+      end
+    end
+
+    context 'when action description includes @skip' do
+      let(:action_description) { 'Skip this action @skip' }
+      it 'returns true' do
+        expect(subject.skip?).to be_truthy
+      end
+    end
+
+    context 'when action and resource description do not include @skip' do
+      let(:resource_description) { 'Do not skip this resource' }
+      let(:resource_description) { 'Do not skip this resource' }
+      it 'returns false' do
+        expect(subject.skip?).to be_falsy
+      end
+    end
+  end
 end

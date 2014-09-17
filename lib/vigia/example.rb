@@ -39,6 +39,10 @@ module Vigia
       Vigia.config.custom_examples_for(self)
     end
 
+    def skip?
+      resource.description.include?('@skip') or action.description.include?('@skip')
+    end
+
     private
     def parameters
       resource.parameters.collection + action.parameters.collection

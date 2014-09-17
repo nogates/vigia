@@ -8,6 +8,7 @@ module Vigia
       def include_shared_folders
         require_custom_examples
         require "#{ __dir__ }/spec/support/utils"
+        require "#{ __dir__ }/spec/support/shared_examples/skip_example"
         require "#{ __dir__ }/spec/support/shared_examples/apib_example"
       end
 
