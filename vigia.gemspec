@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = ''
   spec.license       = 'MIT'
 
-  spec.files         = Dir['Gemfile', 'lib/**/*.rb', '*.md']
+  spec.files         = Dir['Rakefile', 'Gemfile', 'lib/**/*.rb', '*.md']
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = %w(lib)
 
