@@ -1,5 +1,6 @@
-source 'http://production.cf.rubygems.org'
+source 'https://rubygems.org'
 
-gem 'redsnow', github: 'apiaryio/redsnow', submodules: true
+# RedSnow needs to download its git submodules before compiling
+gem 'redsnow', '~> 0.1.3', github: 'apiaryio/redsnow', submodules: true
 
 gemspec

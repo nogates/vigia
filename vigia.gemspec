@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'rake'
 
-  spec.add_dependency 'redsnow', '~> 0.1.3'
+  spec.add_dependency 'redsnow'
   spec.add_dependency 'rest-client'
   spec.add_dependency 'rspec'
 
