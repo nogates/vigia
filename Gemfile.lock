@@ -6,6 +6,7 @@ PATH
       redsnow
       rest-client
       rspec
+      uri_template
 
 GIT
   remote: git://github.com/apiaryio/redsnow.git
@@ -72,6 +73,7 @@ GEM
     tilt (1.4.1)
     timers (4.0.0)
       hitimes
+    uri_template (0.7.0)
     yard (0.8.7.4)
 
 PLATFORMS

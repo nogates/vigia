@@ -52,9 +52,17 @@ shared_examples "redsnow doubles" do
   let(:resource_parameter_one) do
     instance_double(
       RedSnow::Parameter,
-      name: "scenario_slug",
-      example_value: 'scenario_one'
+      name: resource_parameter_one_name,
+      example_value: resource_parameter_one_example_value
     )
+  end
+
+  let(:resource_parameter_one_name) do
+    'scenario_slug'
+  end
+
+  let(:resource_parameter_one_example_value) do
+    'scenario_one'
   end
 
   let(:response) do
@@ -140,9 +148,17 @@ shared_examples "redsnow doubles" do
   let(:action_parameter_one) do
     instance_double(
       RedSnow::Parameter,
-      name: 'page',
-      example_value: '3'
+      name: action_parameter_one_name,
+      example_value: action_parameter_one_example_value
     )
+  end
+
+  let(:action_parameter_one_name) do
+    'page'
+  end
+
+  let(:action_parameter_one_example_value) do
+    '3'
   end
 
   let(:apib_example) do

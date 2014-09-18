@@ -4,12 +4,15 @@ describe Vigia::Example do
 
   include_examples "redsnow doubles"
 
-  let(:uri_template)          { instance_double(Vigia::Url, to_s: '') }
+  let(:url)                   { instance_double(Vigia::Url, expand: '') }
+  let(:parameters)            { instance_double(Vigia::Parameters, to_hash: parameters_hash) }
+  let(:parameters_hash)       { { } }
   let(:resource_uri_template) { '/scenarios/default' }
-  let(:http_client_result) { {code: 200, headers: {}, body: 'the body' } }
+  let(:http_client_result)    { {code: 200, headers: {}, body: 'the body' } }
 
   subject do
-    allow(Vigia::Url).to receive(:new).and_return(uri_template)
+    allow(Vigia::Url).to receive(:new).and_return(url)
+    allow(Vigia::Parameters).to receive(:new).and_return(parameters)
     described_class.new(
       resource: resource,
       action: action,
@@ -31,12 +34,8 @@ describe Vigia::Example do
       expect(subject.requests).to eql({})
     end
     it 'creates a new UriTemplates object' do
-      uri_template_options = {
-        uri_template: resource_uri_template,
-        parameters: [resource_parameter_one, action_parameter_one]
-      }
       expect(Vigia::Url).to receive(:new)
-        .with(uri_template_options).once
+        .with(resource_uri_template).once
       subject
     end
   end
@@ -118,10 +117,11 @@ describe Vigia::Example do
     end
   end
 
-  describe '#compile_url' do
-    it 'calls to_s on uri_template' do
-      subject.compile_url
-      expect(uri_template).to have_received(:to_s)
+  describe '#url' do
+    let(:parameters_hash) { { paramter_one: 'a', paramter_two: 'b' } }
+    it 'calls expand on uri_template with parameters' do
+      expect(url).to receive(:expand).with(parameters_hash)
+      subject.url
     end
   end
 

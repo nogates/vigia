@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redsnow'
   spec.add_dependency 'rest-client'
   spec.add_dependency 'rspec'
+  spec.add_dependency 'uri_template'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'sinatra'

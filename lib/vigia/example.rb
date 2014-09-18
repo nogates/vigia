@@ -9,10 +9,9 @@ module Vigia
       @apib_example = apib_example
       @error        = []
       @requests     = {}
+      @parameters   = Vigia::Parameters.new(resource, action)
       @headers      = Vigia::Headers.new(resource)
-      @url          = Vigia::Url.new(
-                        uri_template: resource.uri_template,
-                        parameters:   parameters)
+      @url          = Vigia::Url.new(resource.uri_template)
     end
 
     # do the request only once ??
@@ -31,8 +30,8 @@ module Vigia
       }
     end
 
-    def compile_url
-      @url.to_s
+    def url
+      @url.expand(parameters)
     end
 
     def custom_examples
@@ -44,8 +43,9 @@ module Vigia
     end
 
     private
+
     def parameters
-      resource.parameters.collection + action.parameters.collection
+      @parameters.to_hash
     end
 
     def http_options_for(response)
@@ -59,19 +59,18 @@ module Vigia
     end
 
     def http_client_request(http_options)
-      instance = Vigia.config.http_client_class.new(http_options)
-      instance.run!
+      Vigia.config.http_client_class.new(http_options).run!
     end
 
     def default_http_options_for(response)
       options = {
         method:  action.method,
-        url:     compile_url,
-        headers: compile_headers(response)
+        url:     url,
+        headers: headers(response)
       }
     end
 
-    def compile_headers(response)
+    def headers(response)
       if with_payload?
         @headers.http_client_with_payload(response, request_for(response))
       else
@@ -80,7 +79,7 @@ module Vigia
     end
 
     def with_payload?
-      %w(POST PUT).include? action.method
+      %w(POST PUT PATCH).include? action.method
     end
 
     def request_for(response)

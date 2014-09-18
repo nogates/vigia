@@ -4,7 +4,7 @@ shared_examples 'apib example' do |runner_example|
 
   runner_example.apib_example.responses.each do |response|
     context description_for(response) do
-      context "when requesting #{ runner_example.compile_url }" do
+      context "when requesting #{ runner_example.url }" do
 
         let(:response)       { response }
         let!(:expectations)  { runner_example.expectations_for(response) }

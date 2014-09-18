@@ -3,15 +3,17 @@
 require 'redsnow'
 require 'rspec'
 require 'rest_client'
+require 'uri_template'
 
-require_relative 'vigia/example'
 require_relative 'vigia/blueprint'
-require_relative 'vigia/rspec'
 require_relative 'vigia/config'
+require_relative 'vigia/example'
 require_relative 'vigia/headers'
+require_relative 'vigia/http_client/rest_client'
+require_relative 'vigia/parameters'
+require_relative 'vigia/rspec'
 require_relative 'vigia/url'
 require_relative 'vigia/version'
-require_relative 'vigia/http_client/rest_client'
 
 module Vigia
   class << self

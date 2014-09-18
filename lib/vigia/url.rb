@@ -1,78 +1,48 @@
+require 'uri'
+
 module Vigia
   class Url
 
-    def initialize(uri_template:, parameters:)
-      @uri_template = uri_template
-      @parameters   = parameters
+    attr_reader :uri_template
+
+    # ApiBluprint uses RFC6570 in all its resource's uri_templates
+    # https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md#1-uri-templates
+    def initialize(apib_uri_template)
+      @uri_template = ::URITemplate.new(:rfc6570, apib_uri_template)
     end
 
-    def to_s
-      url = @uri_template.clone
-      url = modify_url_parameters(url)
-      url = modify_query_parameters(url)
-      "#{ host }#{ url }"
+    def expand(parameters)
+      validate(parameters) # if Vigia.config.validate_url_parameters?
+
+      absolute_url uri_template.expand(parameters.to_hash)
+    end
+
+    def absolute_url path
+      URI.join(host, path).to_s
+    end
+
+    def validate(parameters)
+      return if required_template_parameters.empty?
+
+      missing_parameters = required_template_parameters - valid_paremeters(parameters)
+
+      raise("Uri template #{ @uri_template } needs parameter/s #{ missing_parameters.join(',') }") unless missing_parameters.empty?
     end
 
     def host
       Vigia.config.host
     end
 
-    def modify_query_parameters(url)
-      modify_group(url, query_parameter_regexp) do |group|
-        changes = each_parameter_in(group, /[{?}]/) do |parameter, collection|
-          if valid_parameter?(parameter)
-            collection << "#{ parameter.name }=#{ parameter.example_value }"
-          end
-          collection
-        end
-        changes.empty? ? '' : "?#{ changes.join('&') }"
-      end
-    end
-
-    def modify_url_parameters(url)
-      modify_group(url, url_parameter_regexp) do |group|
-        changes = each_parameter_in(group, /[{}]/) do |parameter, collection|
-          if valid_parameter?(parameter)
-            collection << parameter.example_value
-          else
-            raise("Invalid Url Parameter #{ parameter }")
-          end
-          collection
-        end
-        changes.join('/')
-      end
-    end
-
     private
 
-    def get_parameter parameter_name
-      @parameters.select{|parameter| parameter.name == parameter_name }.first
+    def valid_paremeters(parameters)
+      parameters.to_hash.delete_if{|_,v| v.nil? || v.empty? }.keys
     end
 
-    def url_parameter_regexp
-      /(^{.)*\{([\w,&&[^{]]*)\}(^{.)*/
-    end
-
-    def query_parameter_regexp
-      /(^{.)*\{\?([\w,&&[^{]]*)\}(^{.)*/
-    end
-
-    def modify_group(url, regexp, &block)
-      url.gsub(regexp) do |group|
-        yield group
-      end
-    end
-
-    def each_parameter_in(group, regexp, &block)
-      parameters = group.gsub(regexp, '').split(',')
-      parameters.each_with_object [] do |parameter_name, collection|
-        parameter  = get_parameter(parameter_name)
-        collection = yield parameter, collection
-      end
-    end
-
-    def valid_parameter?(parameter)
-      !parameter.nil? && !parameter.example_value.nil?
+    def required_template_parameters
+      uri_template.tokens.select{
+        |token| token.is_a?(URITemplate::RFC6570::Expression::Basic)
+      }.map(&:variables).flatten
     end
   end
 end
