@@ -13,6 +13,7 @@ module Vigia
 
       private
 
+      # :nocov:
       def parse_request(rest_client_result)
         {
           code: rest_client_result.code,
@@ -37,6 +38,7 @@ module Vigia
           error_request(exception)
         end
       end
+      # :nocov:
     end
   end
 end
