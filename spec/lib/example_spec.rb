@@ -8,7 +8,7 @@ describe Vigia::Example do
   let(:parameters)            { instance_double(Vigia::Parameters, to_hash: parameters_hash) }
   let(:parameters_hash)       { { } }
   let(:resource_uri_template) { '/scenarios/default' }
-  let(:http_client_result)    { {code: 200, headers: {}, body: 'the body' } }
+  let(:http_client_result)    { { code: 200, headers: {}, body: 'the body' } }
 
   subject do
     allow(Vigia::Url).to receive(:new).and_return(url)
@@ -41,30 +41,97 @@ describe Vigia::Example do
   end
 
   describe '#perform_request' do
-    let(:response) { instance_double(RedSnow::Payload, name: 'vigia') }
-    let(:requests) { {} }
+    let(:vigia_config) do
+      instance_double(
+        Vigia::Config,
+        http_client_class: Object,
+        headers: config_header
+      )
+    end
+
+    let(:response_name) { 'vigia' }
+    let(:action_method) { 'DELETE' }
+    let(:url)           { 'http://therequest.com/scenario_one' }
+    let(:config_header) { { config_header: 'a config header' } }
+    let(:http_options)  { { method: action_method, headers: headers, url: url } }
+    let(:requests)      { {} }
+    let(:resource_model_headers_collection) do
+      [ { name: 'Content-type', value: 'application/json' } ]
+    end
+    let(:response_headers_collection) do
+      [ { name: 'My-Custom-Header', value: 'your value here' } ]
+    end
+
+    let(:headers) do
+      {
+        config_header: 'a config header',
+        content_type: 'application/json',
+        my_custom_header: 'your value here'
+      }
+    end
 
     before do
-      allow(subject).to receive(:http_options_for).and_return({options: {}})
+      allow(Vigia).to   receive(:config).and_return(vigia_config)
+      allow(subject).to receive(:http_options_for).and_call_original
       allow(subject).to receive(:http_client_request).and_return(http_client_result)
+      allow(subject).to receive(:url).and_return(url)
     end
 
     context 'when the request has not been performed yet' do
-      before do
-        subject.instance_variable_set("@requests", {})
-        subject.perform_request(response)
+      before do |example|
+        subject.instance_variable_set("@requests", requests)
+        subject.perform_request(response) unless example.metadata[:skip_perfom_request]
       end
 
       it 'generates the options for the http client' do
         expect(subject).to have_received(:http_options_for).with(response)
       end
 
-      it 'calls the http_client on the runner' do
-        expect(subject).to have_received(:http_client_request).with({options: {}})
+      it 'calls the http_client on the runner with the correct http_options' do
+        expect(subject).to have_received(:http_client_request).with(http_options)
       end
 
       it 'includes the request in the requests hash' do
         expect(subject.requests['vigia']).to eql(http_client_result)
+      end
+
+      context 'when the request includes payload' do
+        let(:action_method) { 'POST' }
+        let(:payload_body)  { 'This request content' }
+        let(:http_options)  do
+          {
+            method: action_method,
+            headers: headers,
+            url: url,
+            payload: payload_body }
+        end
+
+        let(:payload_headers_collection) do
+          [ { name: 'Content-type', value: 'application/special-json' },
+            { name: 'Another-fancy-header', value: 'lorem ipsum' } ]
+        end
+        let(:headers) do
+          {
+            config_header: 'a config header',
+            content_type: 'application/special-json',
+            my_custom_header: 'your value here',
+            another_fancy_header: 'lorem ipsum'
+          }
+        end
+        context 'when the payload exists' do
+          it 'calls the http_client on the runner with the correct http_options' do
+            expect(subject).to have_received(:http_client_request).with(http_options)
+          end
+        end
+
+        context 'when the payload does not exists', skip_perfom_request: true do
+          let(:apib_example) do
+            instance_double(RedSnow::TransactionExample, requests: [], responses: [ response ])
+          end
+          it 'raises an error' do
+            expect { subject.perform_request(response) }.to raise_error
+          end
+        end
       end
     end
 
@@ -78,9 +145,9 @@ describe Vigia::Example do
         expect(subject).not_to have_received(:http_options_for)
       end
 
-      it 'does not call the http_client on the runner' do
-        expect(subject).not_to have_received(:http_client_request)
-      end
+#       it 'does not call the http_client on the runner' do
+#         expect(subject).not_to have_received(:http_client_request)
+#       end
 
       it 'includes the request in the requests hash' do
         expect(subject.requests['vigia']).to eql('the cached response')
@@ -90,8 +157,8 @@ describe Vigia::Example do
 
   describe '#expectations_for' do
     let(:expectations) { subject.expectations_for(response) }
-    let(:expected_response_name) { '200' }
-    let(:expected_response_body) { 'The expected body' }
+    let(:response_name) { '200' }
+    let(:response_body) { 'The expected body' }
 
     let(:resource_model_headers_collection) do
       [ {name: 'Resource Header', value: 'Resource Value' } ]

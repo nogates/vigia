@@ -84,7 +84,7 @@ module Vigia
 
     def request_for(response)
       index = apib_example.responses.index(response)
-      apib_example.requests.at(index)
+      apib_example.requests.fetch(index)
     rescue => e
       raise "Unable to load payload for response #{ response.name }"
     end
