@@ -39,7 +39,7 @@ shared_examples "redsnow doubles" do
 
 
   let(:resource_model_headers_collection) do
-    [ {name: 'Resource-Model-Header', value: 'A Resource Model Header' } ]
+    [ { name: 'Resource-Model-Header', value: 'A Resource Model Header' } ]
   end
 
   let(:resource_parameters) do
@@ -68,17 +68,17 @@ shared_examples "redsnow doubles" do
   let(:response) do
     instance_double(
       RedSnow::Payload,
-      name: expected_response_name,
-      body: expected_response_body,
+      name:    response_name,
+      body:    response_body,
       headers: response_headers
     )
   end
 
-  let(:expected_response_name) do
+  let(:response_name) do
     'The example response name'
   end
 
-  let(:expected_response_body) do
+  let(:response_body) do
     'The example response body'
   end
 
@@ -125,6 +125,7 @@ shared_examples "redsnow doubles" do
     instance_double(
       RedSnow::Action,
       name: action_name,
+      method: action_method,
       description: action_description,
       parameters: action_parameters
     )
@@ -132,6 +133,10 @@ shared_examples "redsnow doubles" do
 
   let(:action_name) do
     'My action name'
+  end
+
+  let(:action_method) do
+    'GET'
   end
 
   let(:action_description) do
@@ -162,6 +167,28 @@ shared_examples "redsnow doubles" do
   end
 
   let(:apib_example) do
-    instance_double(RedSnow::TransactionExample)
+    instance_double(
+      RedSnow::TransactionExample,
+      requests: [ payload ],
+      responses: [ response ]
+    )
   end
+#
+#   let(:request) do
+#     instance_double(
+#       RedSnow::Payload,
+#       headers: request_headers
+#     )
+#   end
+#
+#   let(:request_headers) do
+#     instance_double(
+#       RedSnow::Headers,
+#       collection: request_headers_collection
+#     )
+#   end
+#
+#   let(:request_headers_collection) do
+
+
 end
