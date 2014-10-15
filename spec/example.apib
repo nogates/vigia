@@ -1,0 +1,277 @@
+FORMAT: 1A
+HOST: http://example.com/
+
+# Example API
+API FTW
+
+# Group Scenarios
+
+## Scenarios [/scenarios{?page,sort}]
+This resource represents the collection of all scenarios. @skip
+
+### Retrieve all Scenarios [GET]
+Retrieve all scenarios.
+
++ Parameters
+    + page (string, `1`) ... Page result number.
+    + sort (string, `name`) ... Attribute to sort by.
+
+
++ Response 200 (application/vnd.siren+json; charset=utf-8)
+
+        {
+          "class" : ["scenarios", "collection"],
+          "entities" : [
+            {
+              "class": [ "scenario" ],
+              "properties": {
+                "names": [{ "text": "Scenario number one" }],
+                "address": "Here and there",
+                "slug": "number_one"
+              },
+              "links": [
+                {
+                  "rel": ["self"],
+                  "href": "http://example.com/scenarios/number_one"
+                }
+              ],
+              "rel": ["item"]
+            },
+            {
+              "class": [ "scenario" ],
+              "properties": {
+                "names": [{ "text": "Scenario number two" }],
+                "address": "Here but not there",
+                "slug": "number_two"
+              },
+              "links": [
+                {
+                  "rel": ["self"],
+                  "href": "http://example.com/scenarios/number_two"
+                }
+              ],
+              "rel": ["item"]
+            }
+          ],
+          "actions":[
+            {
+              "method":"POST",
+              "type":"application/json",
+              "href":"http://example.com/scenarios",
+              "name":"add-scenario",
+              "fields":[
+                 {"type":"text", "name":"names"},
+                 {"type":"text", "name":"address"}
+              ]
+            }
+          ],
+          "links":[
+            {
+              "rel": ["self"],
+              "href": "http://example.com/scenarios"
+            }
+          ]
+        }
+
+### Create Scenarios [POST]
+Create one or more scenarios.
+
++ Request (application/json)
+
+        {
+          "name": "Scenario number three",
+          "address": "Only there"
+        },
+        {
+          "name": "Scenario number four",
+          "address": "No! There is one more"
+        }
+
+
++ Response 201 (application/vnd.siren+json; charset=utf-8)
+        {
+          "class" : ["scenarios", "collection"],
+          "entities" : [
+            {
+              "class": [ "scenario" ],
+              "properties": {
+                "names": [{ "text": "Scenario number three" }],
+                "address": "Only there",
+                "slug": "number_three"
+              },
+              "links": [
+                {
+                  "rel": ["self"],
+                  "href": "http://example.com/scenarios/number_three"
+                }
+              ],
+              "rel": ["item"]
+            },
+            {
+              "class": [ "scenario" ],
+              "properties": {
+                "names": [{ "text": "Scenario number four" }],
+                "address": "No! There is one more",
+                "slug": "number_four"
+              },
+              "links": [
+                {
+                  "rel": ["self"],
+                  "href": "http://example.com/scenarios/number_four"
+                }
+              ],
+              "rel": ["item"]
+            }
+          ],
+          "links":[
+            {
+              "rel": ["self"],
+              "href": "http://example.com/scenarios"
+            }
+          ]
+        }
+
+## Scenario [/scenarios/{slug}]
+This resource represents a single Scenario.
+
+### Retrieve a Scenario [GET]
+Retrieve a Scenario.
+
++ Parameters
+    + slug (string, `number_three`) ... The unique identifier of the scenario.
+
++ Response 200 (application/vnd.siren+json; charset=utf-8)
+  + Body
+
+            {
+              "class" : ["scenario"],
+              "properties" : {
+                "names" : [{ "text" : "Scenario number three" }],
+                "address" : "Only there",
+                "slug" : "scenario_three"
+              },
+              "links" : [
+                {
+                  "rel" : ["self"],
+                  "href" : "http://example.com/scenarios/number_three"
+                }
+              ]
+            }
+
+# Group Steps
+
+## Steps [/scenarios/{scenario_slug}/steps{?number}]
+This resource represents a collection of Scenario's Steps.
+
+### Retrieve all Steps of a scenario [GET]
+Retrieve all POIs
+
++ Parameters
+    + scenario_slug (string, `scenario_one`) ... Scenario slug
+    + number (string, `10`) ... Amount of steps to show.
+
++ Response 200 (application/vnd.siren+json; charset=utf-8)
+
+        {
+          "class": [ "steps", "collection" ],
+          "entities": [
+            {
+              "class": [ "step" ],
+              "properties": {
+                "id" : 1,
+                "name": "Initial Step",
+                "scenario_slug" : "scenario_one"
+              },
+              "links": [
+                {
+                  "rel": [ "self" ],
+                  "href": "http://example.com/scenarios/scenario_one/steps/1"
+                }
+              ],
+              "rel": [ "item" ]
+            }
+          ],
+          "actions": [],
+          "links": [
+            {
+              "rel": [ "self" ],
+              "href": "http://example.com/scenarios/scenario_one/steps"
+            }
+          ]
+        }
+
+### Create a Step [POST]
+Create a Step
+
++ Parameters
+    + scenario_slug (string, `scenario_one`) ... Scenario slug
+
++ Request (application/json)
+
+        {
+          "name": "Step two",
+          "scenario_slug": "scenario_one"
+        }
+
++ Response 201 (application/vnd.siren+json; charset=utf-8)
+
+        {
+          "class" : ["step"],
+          "properties" : {
+            "name" : "Step two",
+            "id" : 2,
+            "scenario_slug" : "scenario_one"
+          },
+          "links": [
+            {
+              "rel" : ["self"],
+              "href" : "http://example.com/scenarios/scenario_one/2"
+            }
+          ]
+        }
+
+## Step [/scenarios/{scenario_slug}/steps/{id}]
+This resource represents a single POI
+
+### Update a Step [PUT]
+Update a Step
+
++ Parameters
+    + scenario_slug (string, `scenario_one`) ... Scenario slug
+    + id (required,number,`2`) ... An unique identifier of the Step.
+
+
++ Request (application/json)
+
+        {
+          "name": "Step two and half",
+          "id" : 2
+          "scenario_slug": "scenario_one"
+        }
+
++ Response 201 (application/vnd.siren+json; charset=utf-8)
+
+        {
+          "class" : ["step"],
+          "properties" : {
+            "name" : "Step two and half",
+            "id" : 2,
+            "scenario_slug" : "scenario_one"
+          },
+          "links": [
+            {
+              "rel" : ["self"],
+              "href" : "http://example.com/scenarios/scenario_one/2"
+            }
+          ]
+        }
+
+
+### Delete a Step [DELETE]
+Delete a Step
+
++ Parameters
+    + scenario_slug (required, string, `scenario_one`) ... Scenario slug
+    + id (required,number,`2`) ... An unique identifier of the Step.
+
++ Response 204
