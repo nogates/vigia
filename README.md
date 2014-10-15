@@ -4,9 +4,9 @@ Vigia
 # What is it?
 
 Vigia is a gem to perform integration test within RSpec framework using a compatible
-[Api Blueprint](https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md) definition file. It uses [RedSnow]() to parse the Api Blueprint file and RestClient as http client to perform the requests.
+[Api Blueprint](https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md) definition file. It uses [RedSnow](https://github.com/apiaryio/redsnow) to parse the Api Blueprint file and [RestClient](https://github.com/rest-client/rest-client) as http client to perform the requests.
 
-Vigia runs by default only two comparision between the blueprint file and the server response. The Http response code and the inclusion of the blueprint headers inside the headers response.
+Vigia runs by default only two comparision between the blueprint file and the server response. The Http response code and the inclusion of the blueprint headers inside the headers response. But it can be easily extended through rspec shared examples
 
 
 # Installation
@@ -16,7 +16,7 @@ Include Vigia as gem inside `:test` group
 ```ruby
 
 group :test do
-  gem 'vigia', github: 'nogates/vigia', branch: 'wip'
+  gem 'vigia'
 end
 
 ```
@@ -37,7 +37,7 @@ Vigia provides an easy way to configure the parameters of the test
 
 Vigia.configure do |config|
 
-  # Define the Apib Blueprint Path
+  # Define the Apib Blueprint Path. For example, within a Rails app
   config.apib_path = "#{ Rails.root }/apibs/my_api.apib"
 
   # Define the host address where the request will be performed.
