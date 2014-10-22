@@ -1,6 +1,10 @@
 Vigia
 ========
 
+[![Build Status](https://travis-ci.org/nogates/vigia.svg?branch=master)](https://travis-ci.org/nogates/vigia)
+[![Code Climate](https://codeclimate.com/github/nogates/vigia/badges/gpa.svg)](https://codeclimate.com/github/nogates/vigia)
+[![Test Coverage](https://codeclimate.com/github/nogates/vigia/badges/coverage.svg)](https://codeclimate.com/github/nogates/vigia)
+
 # What is it?
 
 Vigia is a gem to perform integration test within RSpec framework using a compatible
