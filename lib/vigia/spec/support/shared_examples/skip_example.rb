@@ -6,8 +6,8 @@ shared_examples 'skip example' do |runner_example|
     context description_for(response) do
       context "when requesting #{ runner_example.url }" do
 
-        xit '# disabled with @skip' do
-          # Do nothing
+        it '# disabled with @skip' do
+          expect(runner_example.skip?).to be_truthy
         end
       end
     end

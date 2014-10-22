@@ -1,19 +1,17 @@
 # encoding: utf-8
 
-# Test Coverage
-require 'simplecov'
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
 
 SimpleCov.minimum_coverage 100 # O_o
 SimpleCov.start do
   add_filter "/spec/"
 end
 
-
 require 'vigia'
 require 'pry'
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
-
 
 module Vigia
   class ExampleTest
