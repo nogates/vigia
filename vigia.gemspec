@@ -6,11 +6,12 @@ require 'vigia/version'
 Gem::Specification.new do |spec|
   spec.name          = 'vigia'
   spec.version       = Vigia::VERSION
-  spec.authors       = ['atlas2ninjas']
-  spec.email         = ['atlas2ninjas@lonelyplanet.com.au']
+  spec.authors       = ['David Tapiador', 'atlas2ninjas']
+  spec.email         = ['david.tapiador@lonelyplanet.com.au',
+                        'atlas2ninjas@lonelyplanet.com.au']
   spec.summary       = %q{Test your Apiary Blueprint specification on ruby}
   spec.description   = %q{Test your Apiary Blueprint specification on ruby}
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/nogates/vigia'
   spec.license       = 'MIT'
 
   spec.files         = Dir['Rakefile', 'Gemfile', 'lib/**/*.rb', '*.md']
