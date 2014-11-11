@@ -1,18 +1,25 @@
 module Vigia
   class Config
-    attr_accessor :apib_path, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class
+    attr_accessor :source_file, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class, :adapter, :hooks, :rspec_config_block
 
     def initialize
       @host                  = nil
-      @apib_path             = nil
+      @source_file           = nil
+      @rspec_config_block    = nil
       @headers               = {}
       @custom_examples_paths = []
       @custom_examples       = []
+      @hooks                 = []
+      @adapter               = Vigia::Adapters::Blueprint
       @http_client_class     = Vigia::HttpClient::RestClient
     end
 
+    def apply
+      validate!
+    end
+
     def validate!
-      raise("You need to provide an apib_path") unless @apib_path
+      raise("You need to provide an source") unless source_file
       raise("You have to provide a host value in config or in the Apib") unless host
     end
 
@@ -20,27 +27,36 @@ module Vigia
       @custom_examples << { filter: filter, name: name }
     end
 
-    def host
-      @host || blueprint.metadata['host']
+    def rspec_config(&block)
+      @rspec_config_block = block
     end
 
-    def custom_examples_for(specpaib_example)
-      custom_examples.each_with_object([]) do |custom_example, collection|
-        collection << custom_example[:name] if eligible_example?(specpaib_example, custom_example[:filter])
-        collection
-      end
+    def before_group(&block)
+      store_hook(Vigia::Sail::Group, :before, block)
     end
 
-    def blueprint
-      @blueprint ||= Vigia::Blueprint.new(File.read(apib_path))
+    def after_group(&block)
+      store_hook(Vigia::Sail::Group, :after, block)
     end
 
-    private
+    def before_context(&block)
+      store_hook(Vigia::Sail::Context, :before, block)
+    end
 
-    def eligible_example?(specpaib_example, filter)
-      return true if filter == :all
+    def after_context(&block)
+      store_hook(Vigia::Sail::Context, :after, block)
+    end
 
-      [ specpaib_example.resource.name, specpaib_example.action.name ].include?(filter)
+    def before_example(&block)
+      store_hook(Vigia::Sail::Example, :before, block)
+    end
+
+    def after_example(&block)
+      store_hook(Vigia::Sail::Example, :after, block)
+    end
+
+    def store_hook(rspec_class, filter, block)
+      @hooks << { rspec_class: rspec_class, filter: filter,  block: block }
     end
   end
 end

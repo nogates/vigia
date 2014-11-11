@@ -1,7 +1,6 @@
 module Vigia
   class Headers
 
-    # ToDo: resource should be an instance variable
     def initialize(resource)
       @resource = resource
     end

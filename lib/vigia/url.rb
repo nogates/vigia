@@ -12,21 +12,11 @@ module Vigia
     end
 
     def expand(parameters)
-      validate(parameters) # if Vigia.config.validate_url_parameters?
-
-      absolute_url uri_template.expand(parameters.to_hash)
+      absolute_url uri_template.expand(valid_parameters(parameters).to_hash)
     end
 
     def absolute_url path
       URI.join(host, path).to_s
-    end
-
-    def validate(parameters)
-      return if required_template_parameters.empty?
-
-      missing_parameters = required_template_parameters - valid_paremeters(parameters)
-
-      raise("Uri template #{ @uri_template } needs parameter/s #{ missing_parameters.join(',') }") unless missing_parameters.empty?
     end
 
     def host
@@ -35,14 +25,8 @@ module Vigia
 
     private
 
-    def valid_paremeters(parameters)
-      parameters.to_hash.delete_if{|_,v| v.nil? || v.empty? }.keys
-    end
-
-    def required_template_parameters
-      uri_template.tokens.select{
-        |token| token.is_a?(URITemplate::RFC6570::Expression::Basic)
-      }.map(&:variables).flatten
+    def valid_parameters(parameters)
+      Vigia::Parameters.new(parameters)
     end
   end
 end

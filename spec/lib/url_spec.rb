@@ -11,7 +11,13 @@ describe Vigia::Url do
     )
   end
 
-  let(:parameters_hash) { { 'scenario_slug' => 'scenario_one', 'page' => '3' } }
+  let(:parameters_hash) do
+    [
+      { name: 'scenario_slug', value: 'scenario_one', required: true },
+      { name: 'page', value: '3', required: false }
+    ]
+  end
+
   let(:uri_template)    { '/scenarios/{scenario_slug}/examples{?page,sort}' }
   let(:host)            { 'http://example.com' }
 
@@ -25,34 +31,7 @@ describe Vigia::Url do
     end
 
     it 'returns the right url' do
-      expect(subject.expand(parameters)).to eql('http://this-example.com/scenarios/scenario_one/examples?page=3')
-    end
-  end
-
-  describe '#validate' do
-    context 'when url parameter validation is enabled' do
-      context 'when url does not have required parameters' do
-        let(:parameters_hash) { { 'without_url_parameters' => 'truedat' } }
-        let(:uri_template) { '/scenarios/{?without_url_parameters}' }
-
-        it 'does not raise an error' do
-          expect { subject.validate(parameters) }.not_to raise_error
-        end
-      end
-      context 'when url parameters are valid' do
-        let(:parameters_hash) { { 'scenario_slug' => 'scenario_one' } }
-
-        it 'does not raise an error' do
-          expect { subject.validate(parameters) }.not_to raise_error
-        end
-      end
-      context 'when url parameters are invalid' do
-        let(:parameters_hash) { { 'scenario_slug' => '', 'page' => '3' } }
-
-        it 'raises an error' do
-          expect { subject.validate(parameters) }.to raise_error
-        end
-      end
+      expect(subject.expand(parameters_hash)).to eql('http://this-example.com/scenarios/scenario_one/examples?page=3')
     end
   end
 

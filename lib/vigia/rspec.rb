@@ -1,8 +1,8 @@
 module Vigia
   class Rspec
     class << self
-      def apib
-        Vigia.config.blueprint.apib
+      def adapter
+        @@adapter
       end
 
       def include_shared_folders
@@ -22,26 +22,45 @@ module Vigia
       end
     end
 
-    # Run `Vigia.spec_folder` spec file
     def run!
-      with_options do
+      with_rspec_options do
         RSpec::Core::Runner::run(
           [ Vigia.spec_folder ], $stderr, $stdout)
       end
     end
 
+    def start_tests(rspec)
+      with_rspec_options do
+        set_global_memoizers(rspec)
+
+        Vigia::Sail::Group.setup_and_run_primary(rspec)
+      end
+    end
+
+    def set_global_memoizers(rspec)
+      instance = adapter
+      rspec.let(:client)  { Vigia.config.http_client_class.new(http_client_options) }
+      rspec.let(:result)  { client.run }
+      rspec.let(:result!) { client.run! }
+      rspec.let(:adapter) { instance }
+    end
+
+    def adapter
+      @@adapter ||= Vigia.config.adapter.instance
+    end
+
     private
 
-    # ToDo: Do we need rspec config?
-
-    def with_options &block
+    def with_rspec_options
       RSpec.configure do |config|
-        config.before(:each) do |example|
-        end
-        config.before(:suite) do
-        end
+        configure_vigia_rspec(config)
       end
       yield
+    end
+
+    def configure_vigia_rspec(rspec_config)
+      return unless Vigia.config.rspec_config_block.respond_to?(:call)
+      Vigia.config.rspec_config_block.call(rspec_config)
     end
   end
 end

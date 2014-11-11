@@ -1,22 +1,33 @@
 module Vigia
   class Parameters
 
-    attr_reader :resource, :action
+    attr_reader :parameters
 
-    def initialize(resource, action)
-      @resource = resource
-      @action   = action
+    def initialize(parameters)
+      @parameters = parameters
+      validate
     end
 
     def to_hash
-      all.each_with_object({}) do |parameter, collection|
-        collection[parameter.name] = parameter.example_value
-        collection
+      @parameters.each_with_object({}) do |parameter, hash|
+        hash.merge!(parameter[:name] => parameter[:value])
       end
     end
 
-    def all
-      resource.parameters.collection + action.parameters.collection
+    def validate
+      return if required_parameters.empty?
+
+      raise("Missing parameters #{ missing_parameters.join(',') }") unless missing_parameters.empty?
+    end
+
+    private
+
+    def required_parameters
+      parameters.select{ |k| k[:required] == true }
+    end
+
+    def missing_parameters
+      required_parameters.select{ |k| k[:value].nil? || k[:value].empty? }.map{ |k| k[:name] }
     end
   end
 end

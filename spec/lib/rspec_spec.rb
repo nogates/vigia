@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Vigia::Rspec do
-
   describe '#run!' do
     before do
       allow(RSpec::Core::Runner).to receive(:run)

@@ -169,26 +169,16 @@ shared_examples "redsnow doubles" do
   let(:apib_example) do
     instance_double(
       RedSnow::TransactionExample,
-      requests: [ payload ],
-      responses: [ response ]
+      requests: apib_requests,
+      responses: apib_responses
     )
   end
-#
-#   let(:request) do
-#     instance_double(
-#       RedSnow::Payload,
-#       headers: request_headers
-#     )
-#   end
-#
-#   let(:request_headers) do
-#     instance_double(
-#       RedSnow::Headers,
-#       collection: request_headers_collection
-#     )
-#   end
-#
-#   let(:request_headers_collection) do
 
+  let(:apib_requests) do
+    [ payload ]
+  end
 
+  let(:apib_responses) do
+    [ response ]
+  end
 end

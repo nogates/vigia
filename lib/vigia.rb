@@ -5,13 +5,20 @@ require 'rspec'
 require 'rest_client'
 require 'uri_template'
 
-require_relative 'vigia/blueprint'
+require_relative 'vigia/adapter'
+require_relative 'vigia/adapters/blueprint'
 require_relative 'vigia/config'
-require_relative 'vigia/example'
 require_relative 'vigia/headers'
+require_relative 'vigia/http_client/options'
 require_relative 'vigia/http_client/rest_client'
+require_relative 'vigia/http_client/requests'
 require_relative 'vigia/parameters'
 require_relative 'vigia/rspec'
+require_relative 'vigia/sail/rspec_object'
+require_relative 'vigia/sail/example'
+require_relative 'vigia/sail/context'
+require_relative 'vigia/sail/group'
+require_relative 'vigia/sail/described_class'
 require_relative 'vigia/url'
 require_relative 'vigia/version'
 
@@ -23,7 +30,7 @@ module Vigia
     def configure
       @config = Vigia::Config.new
       yield @config
-      @config.validate!
+      @config.apply
     end
     def spec_folder
       File.join(__dir__, 'vigia', 'spec')

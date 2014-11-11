@@ -4,30 +4,29 @@ describe Vigia::Parameters do
 
   include_examples "redsnow doubles"
 
+  let(:parameters_hash) do
+    [
+      { name: 'scenario_slug', value: 'scenario_one', required: true },
+      { name: 'page', value: '3', required: false }
+    ]
+  end
+
   subject do
-    described_class.new resource, action
+    described_class.new parameters_hash
   end
 
   describe '#initialize' do
     it 'creates a new Vigia::Parameters instance' do
       expect(subject).to be_a(Vigia::Parameters)
     end
-    it 'creates #resource getter' do
-      expect(subject.resource).to be(resource)
-    end
-    it 'creates #action getter' do
-      expect(subject.action).to be(action)
+    it 'creates #parameters getter' do
+      expect(subject.parameters).to be(parameters_hash)
     end
   end
 
   describe '#to_hash' do
-    let(:resource_parameter_one_name)          { 'place' }
-    let(:resource_parameter_one_example_value) { 'the-world' }
-    let(:action_parameter_one_name)            { 'time' }
-    let(:action_parameter_one_example_value)   { 'now' }
-
     it 'returns the expected parameters in a hash instance' do
-      hash = { 'place' => 'the-world', 'time' => 'now' }
+      hash = { 'scenario_slug' => 'scenario_one', 'page' => '3' }
       expect(subject.to_hash).to eql(hash)
     end
   end

@@ -1,15 +1,15 @@
-FORMAT: 1A
+aFORMAT: 1A
 HOST: http://example.com/
 
 # Example API
 API FTW
 
-# Group Scenarios
+# Group Scenarios 1
 
-## Scenarios [/scenarios{?page,sort}]
+## 1.1 Scenarios [/scenarios{?page,sort}]
 This resource represents the collection of all scenarios. @skip
 
-### Retrieve all Scenarios [GET]
+### 1.1.1 Retrieve all Scenarios [GET]
 Retrieve all scenarios.
 
 + Parameters
@@ -73,7 +73,7 @@ Retrieve all scenarios.
           ]
         }
 
-### Create Scenarios [POST]
+### 1.1.2 Create Scenarios [POST]
 Create one or more scenarios.
 
 + Request (application/json)
@@ -131,14 +131,14 @@ Create one or more scenarios.
           ]
         }
 
-## Scenario [/scenarios/{slug}]
+## 1.2 Scenario [/scenarios/{slug}]
 This resource represents a single Scenario.
 
-### Retrieve a Scenario [GET]
+### 1.2.1 Retrieve a Scenario [GET]
 Retrieve a Scenario.
 
 + Parameters
-    + slug (string, `number_three`) ... The unique identifier of the scenario.
+    + slug (string, required, `number_three`) ... The unique identifier of the scenario.
 
 + Response 200 (application/vnd.siren+json; charset=utf-8)
   + Body
@@ -158,12 +158,12 @@ Retrieve a Scenario.
               ]
             }
 
-# Group Steps
+#Group 2 Steps
 
-## Steps [/scenarios/{scenario_slug}/steps{?number}]
+## 2.1 Steps [/scenarios/{scenario_slug}/steps{?number}]
 This resource represents a collection of Scenario's Steps.
 
-### Retrieve all Steps of a scenario [GET]
+### 2.1.1 Retrieve all Steps of a scenario [GET]
 Retrieve all POIs
 
 + Parameters
@@ -200,7 +200,7 @@ Retrieve all POIs
           ]
         }
 
-### Create a Step [POST]
+### 2.1.2 Create a Step [POST]
 Create a Step
 
 + Parameters
@@ -230,10 +230,10 @@ Create a Step
           ]
         }
 
-## Step [/scenarios/{scenario_slug}/steps/{id}]
+## 2.2 Step [/scenarios/{scenario_slug}/steps/{id}]
 This resource represents a single POI
 
-### Update a Step [PUT]
+### 2.2.1 Update a Step [PUT]
 Update a Step
 
 + Parameters
@@ -267,7 +267,7 @@ Update a Step
         }
 
 
-### Delete a Step [DELETE]
+### 2.2.2 Delete a Step [DELETE]
 Delete a Step
 
 + Parameters
