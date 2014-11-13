@@ -6,7 +6,7 @@ module Vigia
 
         def setup_and_run(name, rspec)
           name, options  = collection.select{ |k,v| k == name }.first
-          instance = new(name, options, rspec)
+          instance       = new(name, options, rspec)
           instance.with_hooks do
             instance.run
           end

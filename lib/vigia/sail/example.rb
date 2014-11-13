@@ -8,21 +8,14 @@ module Vigia
           @collection.merge!(name => options)
         end
 
-        def run_in_context(lookout, rspec_context)
-          examples_for_context(lookout, rspec_context).map do |example|
-            example.with_hooks do
-              example.run
-            end
+        def run_in_context(context, rspec_context)
+          @collection.each do |name, options|
+            setup_and_run(name, rspec_context) if example_contexts_include?(context, options[:contexts])
           end
         end
 
-        def examples_for_context(lookout, rspec_context)
-          @collection.select do |name, options|
-            valid_contexts = [ *(options[:contexts] || :default) ]
-            valid_contexts.include?(lookout.name)
-          end.map do |name, options|
-            new(name, options, rspec_context)
-          end
+        def example_contexts_include?(context, enabled_contexts)
+          [ *(enabled_contexts || :default) ].include?(context.name)
         end
       end
 

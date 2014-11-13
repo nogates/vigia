@@ -22,6 +22,7 @@ Vigia.configure do |config|
 
   config.rspec_config do |rspec_config|
     rspec_config.reset
+    rspec_config.formatter = RSpec::Core::Formatters::DocumentationFormatter
   end
 
   config.before_group   { }
