@@ -7,11 +7,11 @@ Vigia
 
 # What is it?
 
-Vigia is a gem to perform integration test within RSpec framework using a compatible
-[Api Blueprint](https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md) definition file. It uses [RedSnow](https://github.com/apiaryio/redsnow) to parse the Api Blueprint file and [RestClient](https://github.com/rest-client/rest-client) as http client to perform the requests.
+<img src="http://singularities.org/vigia.png" width="96" height="96" class="right" alt="Vigia logo" />
 
-Vigia runs by default only two comparision between the blueprint file and the server response. The Http response code and the inclusion of the blueprint headers inside the headers response. But it can be easily extended through rspec shared examples
+Vigia is a gem to perform integration tests using RSpec and a compatible adapter (See [Adapters](#adapters)). The adapter creates the structure of the test (groups and context) and sets up all the variables (See [Context variables](#context_variables)) used to perform the http request.
 
+These result and expectations objects can be used to run examples that will compare the expected value with the server response value. Vigia allows to use a variety of different ways to execute these comparisions (See [Vigia Examples](#vigia_examples) and [Custom Shared Examples](#vigia_shared_examples))
 
 # Installation
 
@@ -27,48 +27,21 @@ end
 
 Run bundle install
 
-```
+```bash
 $ bundle install
 ```
 
-Vigia can now be used inside your application.
+Now, Vigia can be used inside your application.
 
 # Getting started
 
-Vigia provides an easy way to configure the parameters of the test
-
-```ruby
-
-Vigia.configure do |config|
-
-  # Define the Apib Blueprint Path. For example, within a Rails app
-  config.apib_path = "#{ Rails.root }/apibs/my_api.apib"
-
-  # Define the host address where the request will be performed.
-  config.host = 'http://localhost:3000'
-
-  # Include examples files within the Rspec.
-  config.custom_examples_paths = [ "#{ Rails.root }/spec/apibs" ]
-
-  # Add custom examples for the apib.
-  config.add_custom_examples_on(:all, 'my custom examples')
-
-  # Includes a collection of custom headers in all the requests.
-  config.headers = { authorization: 'Bearer <your hash here>' }
-
-end
-
-```
-
-## Putting all together: using a rake task to perform the tests
+## Simplest example
 
 This example shows an easy way to start a rails server an perform you apibs test.
 
 ```ruby
 # Your lib/tasks/vigia.rake
-
 namespace :spec do
-
   desc 'Run Vigia tests'
   task :vigia => :environment do
 
@@ -78,19 +51,207 @@ namespace :spec do
     sleep 10
 
     Vigia.configure do |config|
-      config.apib_path = "#{ Rails.root }/apibs/my_api.apib"
-      config.host = 'http://localhost:3000'
+      config.source_file = "#{ Rails.root }/apibs/my_api.apib"
+      config.host        = 'http://localhost:3000'
     end
 
     Vigia.rspec!
-
   end
 end
 ```
 
-## Custom examples
+## Configuration
 
-Vigia allows to include custom rspec examples in the test using some options in the config
+Vigia provides an easy way to configure the parameters of the test, but also has enough flexibility in case that you need to run custom operations during the tests.
+
+```ruby
+
+Vigia.configure do |config|
+
+  # Define the your source file. For example, within a Rails app
+  config.source_file = "#{ Rails.root }/apibs/my_api.apib"
+
+  # Define the host address where the request will be performed.
+  config.host = 'http://localhost:3000'
+
+  # Includes a collection of custom headers in all the requests.
+  config.headers = { authorization: 'Bearer <your hash here>' }
+
+  # Reset rspec_config and set up documentation formatter
+  config.rspec_config do |rspec_config|
+    rspec_config.reset
+    rspec_config.formatter = RSpec::Core::Formatters::DocumentationFormatter
+  end
+
+  # Attach a before_context hook to set up the database using Databasecleaner
+  config.before_context do
+    DatabaseCleaner.start
+  end
+
+  # Set a timer on the primary group and raise an exception if the
+  # described group takes more than 5 seconds to run
+  config.before_group do
+    let!(:group_started_at) { Time.now } if described_class.options[:primary]
+  end
+
+  config.after_group do
+    if described_class.options[:primary]
+      it 'has taken less than 5 seconds to run this example' do
+        expect(Time.now.to_i - group_started_at.to_i).to be < 5
+      end
+    end
+  end
+end
+
+Vigia.rspec!
+
+```
+For more information about config, see the `Vigia::Config` class.
+
+## Adapters
+
+By default, Vigia uses `Vigia::Adapters::Blueprint` adapter. This adapter takes an Api Blueprint compatible file and parses it using [RedSnow](https://github.com/apiaryio/redsnow). Then, it builds up the test structure accordingly.
+
+If needed, Vigia can be configured to use a custom adapter. To do so, you just need to specify the adapter class inside the vigia configuration block:
+
+```ruby
+Vigia.configure do |config|
+  config.adapter = MyBlogAdapter
+end
+```
+
+Then, insde your adapter class, you can use the `setup_adater` method to define the groups and contexts the adapter will provide:
+
+```ruby
+
+# Post
+class MyBlogAdapter < Vigia::Adapter
+  setup_adapter do
+    group :resource,
+      primary: true,
+      contexts: [ :default ]
+      describes: [ :post, :pages ]
+
+    context :default,
+      http_client_options: {
+        url: -> { "/#{ resource }" },
+        method: :get
+        },
+      expectations: {
+        code: 200,
+        headers: {},
+        body: -> { adapter.body_for(resource) }
+      }
+  end
+
+  def body_for(resource)
+    case resource
+    when :post
+      # Your post index expected body
+    when :pages
+      # Your pages index expected body
+    else
+      'Unknown resource. WTH!'
+    end
+  end
+end
+```
+
+When vigia starts, it will fetch the first group defined as primary. For each group, Vigia will loop on each element of the describes option (`:post, :page` in this example), and will set a rspec memoizer named as the group (`let(:resource) { :post }`). Then, it will run the children (if any) and the contexts in this group, setting up the `http_client_options` and `expectations` memoizers per context.
+
+See `Vigia::Adapters::Blueprint` class for more information about configuring and setting up an adapter.
+
+## Context Variables
+
+Vigia tries to be consistent with the way the RSpec are normally written. It creates the describe groups and context based on the adapter configuration and set up all the variables for the examples by using RSpec memoizers
+
+```ruby
+
+# With an adapter `ExampleAdapter` with this config
+#
+# group :resource,
+#   describes: [ :posts, :pages ],
+#   children:  [ :action ]
+#
+# group :action
+#   describes: [ :get, :post ],
+#   context:   [ :default ]
+#
+# context :default,
+#   http_client_options: {
+#     method:  -> { action.to_s.upcase }
+#     url:     -> { adapter.url_for(resource) }" }
+#     headers: :headers
+#   expectations:
+#     code: :code
+#     headers: {}
+#     body: -> { Body.for(resource} }
+#
+# Vigia will generate this RSpec code
+
+describe Vigia::RSpec do
+  let(:adapter) { ExampleAdapter.instance }
+  let(:client)  { Vigia.config.http_client_class.new(http_options) }
+  let(:result)  { client.run }
+
+  # the loop starts...
+  describe 'posts' do
+    let(:resource) { :posts }
+
+    describe 'action' do
+      let(:action) { :get }
+
+      context 'default' do
+        let(:http_client_options) { Vigia::HttpClient::Options.new(context_options) }
+        let(:expectations)        { Vigia::HttpClient::ExpectedRequest.new(expectations) }
+
+        # EXAMPLES RUN HERE!
+      end
+      # NEXT ACTION
+    end
+    # NEXT RESOURCE
+  end
+end
+```
+
+Also, It is important to mention that it is in this context where the adapter configuration will executed. In the previous example, we configured the http_client option as follows:
+
+```ruby
+#   http_client_options: {
+#     method:  -> { action.to_s.upcase }
+#     url:     -> { adapter.url_for(resource) }" }
+#     headers: :headers
+```
+
+The option `method` is a lambda object. This object will be executed inside the memoizer RSpec context. It is the same as doing:
+
+```ruby
+  # it has access to all context/group memoizers
+  let(:method) { action.to_s.upcase }
+```
+
+You can also use the adapter like in option `url`, since it has been defined as a memoizer by Vigia::RSpec.
+
+Lastly, you can specify a symbol as the option value. In this case, the adapter will be the reciever of this method.
+
+## Vigia Examples
+
+The first way to include examples on vigia is using `register`. Option `disabled_if` can be used to prevent the example for being executed on different situations. `contexts` limits the example to the listed contexts.
+
+```ruby
+
+# On your config file, spec_helper, etc.
+Vigia::Sail::Example.register(
+  :my_custom_body_validator,
+  expectation: -> { expect { MyValidator(result.body) }.not.to raise_error } },
+  contexts:    [ :my_context ],  # default: :default
+  disable_if:  -> { ! result.headers[:content_type].include?('my_validator_mime') }
+  )
+```
+
+## Custom shared examples
+
+Vigia allows to include custom shared rspec examples in the test using some options in the config
 
 ```ruby
 
@@ -102,11 +263,6 @@ Vigia.configure do |config|
 
   # To the example in all your request use `:all` symbol
   config.add_custom_examples_on(:all, 'my custom examples')
-
-  # You can specify the name of an action or a resource. Only the requests which belong to that
-  # resource or action will run these shared examples
-  config.add_custom_examples_on('Create an Image', 'create image examples')
-
 end
 ```
 
@@ -117,29 +273,8 @@ Then, create your Rspec shared example and name the examples accordingly
 
 shared_examples 'my custom examples' do |vigia_example, response|
   it 'is a valid json response' do
-    expect { JSON.parse(result[:body]) }.not_to raise_error
+    expect { JSON.parse(result.body) }.not_to raise_error
   end
 end
 
-shared_examples 'create image examples' do |vigia_example, response|
-  before do
-    @json_result = JSON.parse(result[:body])
-    @json_expectation = JSON.parse(expectations[:body])
-  end
-
-  it 'has the expected link to the image' do |vigia_example, response|
-    expect(@json_result['image']['link']).to eql(@json_expectation['image']['link'])
-  end
-end
 ```
-
-# ToDo
-
- - [ ] Vigia::Example defines each Api Blueprint transactional example, but each example can have several responses (200, 404, etc.). Think a better way to handle this instead of passing the response variable across methods.
-
- - [ ] Spike: Do we need to set RSpec specific options? (Vigia::Rspec)
-
- - [ ] Parse http client exceptions properly. (done?)
-
- - [ ] Support custom http client through config. (low priority)
-
