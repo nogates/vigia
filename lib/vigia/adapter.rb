@@ -4,7 +4,7 @@ module Vigia
     attr_accessor :source_file, :structure
 
     class << self
-      def config_adapter(&block)
+      def setup_adapter(&block)
         raise 'You have to call config_adapter with a block' unless block_given?
         @template = block
       end

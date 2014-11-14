@@ -16,15 +16,15 @@ describe Vigia::Adapter do
     described_class.instance_variable_set('@template', template)
   end
 
-  describe '::config_adapter' do
+  describe '::setup_adapter' do
     let(:template) { -> { 'a proc' } }
 
     it 'raises an exception if not block has given' do
-      expect { described_class.config_adapter('a') }.to raise_error
+      expect { described_class.setup_adapter('a') }.to raise_error
     end
 
     it 'stores the block in the @template variable' do
-      described_class.config_adapter(&template)
+      described_class.setup_adapter(&template)
       expect(described_class.instance_variable_get('@template')).to be(template)
     end
   end

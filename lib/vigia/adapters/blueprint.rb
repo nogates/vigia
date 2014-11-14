@@ -4,7 +4,7 @@ module Vigia
 
       attr_reader :apib
 
-      config_adapter do
+      setup_adapter do
 
         after_initialize do
           @apib_parsed = RedSnow::parse(File.read(source_file))
