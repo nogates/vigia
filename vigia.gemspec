@@ -31,5 +31,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'json'
   spec.add_development_dependency 'pry-debugger'
   spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'cucumber'
 end
 
