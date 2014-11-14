@@ -64,6 +64,26 @@ describe Vigia::Sail::Example do
     end
   end
 
+  describe '#expectation' do
+    let(:options) { { expectation: block } }
+
+    context 'when expectation responds to :call' do
+      let(:block)   { -> { 'a block' } }
+
+      it 'returns the block' do
+        expect(subject.expectation).to be(block)
+      end
+    end
+
+    context 'when expectation does not respond to :call' do
+      let(:block) { 'a string' }
+
+      it 'raises an exception' do
+        expect { subject.expectation }.to raise_error
+      end
+    end
+  end
+
   describe '#to_s' do
     context 'when option description is nil' do
 

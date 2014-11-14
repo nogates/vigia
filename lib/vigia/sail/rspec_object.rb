@@ -51,6 +51,11 @@ module Vigia
 
       private
 
+      def must_be_a_block(block, error_message)
+        return block if block.respond_to?(:call)
+        raise error_message
+      end
+
       def object_hooks(filter_name)
         option_name = "#{ filter_name }_#{ self.class.name.split('::').last.downcase }".to_sym
         [ *options[option_name] ].compact

@@ -2,8 +2,7 @@ module Vigia
   module Sail
     class Example < Vigia::Sail::RSpecObject
       class << self
-
-        def register(name, options = {})
+        def register(name, options)
           @collection = {} if collection.nil?
           @collection.merge!(name => options)
         end
@@ -25,8 +24,12 @@ module Vigia
           skip              if instance.skip?(self)     || (respond_to?(:skip?)     and send(:skip?))
           skip('__vigia__') if instance.disabled?(self) || (respond_to?(:disabled?) and send(:disabled?))
 
-          instance_exec(&instance.options[:expectation])
+          instance_exec(&instance.expectation)
         end
+      end
+
+      def expectation
+        must_be_a_block(options[:expectation], "Example `#{ name }` expectation must be a block")
       end
 
       def to_s
