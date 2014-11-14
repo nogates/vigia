@@ -5,11 +5,13 @@ module Vigia
       def run
         instance = self
         rspec.context do
-          let(:http_client_options) { instance.set_http_client_options(self) }
-          let(:expectations)        { instance.set_expectations(self) }
+          instance.with_hooks(self) do
+            let(:http_client_options) { instance.set_http_client_options(self) }
+            let(:expectations)        { instance.set_expectations(self) }
 
-          instance.run_examples(self)
-          instance.run_shared_examples(self)
+            instance.run_examples(self)
+            instance.run_shared_examples(self)
+          end
         end
       end
 

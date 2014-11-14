@@ -10,8 +10,14 @@ module Vigia
       end
 
       def run
-        setup_objects
-        describe_objects
+        described_objects.each_with_index do |object, index|
+          group_instance = create_group_instance(object, index)
+          rspec.describe group_instance do
+            let(group_instance.group.name) { group_instance.described_object }
+
+            group_instance.run(self)
+          end
+        end
       end
 
       def children
@@ -22,40 +28,18 @@ module Vigia
         [ *options[:contexts] ] || []
       end
 
-      def setup_objects
-        @describes = set_describe_objects
+      def described_objects
+        contextual_object(option_name: :describes) || []
       end
 
-      def describe_objects
-        @describes.each do |object|
-          rspec.describe object do
-            let(object.ocean.name) { object.described_object }
-
-            object.ocean.children.each do |group_name|
-              Vigia::Sail::Group.setup_and_run(group_name, self)
-            end
-
-            object.ocean.contexts.each do |context_name|
-              Vigia::Sail::Context.setup_and_run(context_name, self)
-            end
-          end
-        end
-      end
-
-      def set_describe_objects
-        described_objects = contextual_object(option_name: :describes)
-        described_objects.each_with_object([]) do |object, classes|
-          classes << create_described_object(object)
-        end
-      end
-
-      def create_described_object(object)
-        Vigia::Sail::DescribedClass.new.tap do |instance|
-          instance.send("#{ name }=", object)
+      def create_group_instance(object, index)
+        instance_name = "#{ name }#{ index }"
+        Vigia::Sail::GroupInstance.new(instance_name, options, rspec).tap do |instance|
+          instance.define_singleton_method("#{ name }", -> { object })
           instance.parent_object    = rspec.described_class.described_object unless options[:primary]
           instance.described_object = object
           instance.description      = (options[:description] || object.to_s)
-          instance.ocean            = self
+          instance.group            = self
         end
       end
     end

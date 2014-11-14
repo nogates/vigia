@@ -32,11 +32,11 @@ module Vigia
     end
 
     def before_group(&block)
-      store_hook(Vigia::Sail::Group, :before, block)
+      store_hook(Vigia::Sail::GroupInstance, :before, block)
     end
 
     def after_group(&block)
-      store_hook(Vigia::Sail::Group, :after, block)
+      store_hook(Vigia::Sail::GroupInstance, :after, block)
     end
 
     def before_context(&block)
@@ -45,14 +45,6 @@ module Vigia
 
     def after_context(&block)
       store_hook(Vigia::Sail::Context, :after, block)
-    end
-
-    def before_example(&block)
-      store_hook(Vigia::Sail::Example, :before, block)
-    end
-
-    def after_example(&block)
-      store_hook(Vigia::Sail::Example, :after, block)
     end
 
     def store_hook(rspec_class, filter, block)

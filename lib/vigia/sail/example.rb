@@ -25,7 +25,7 @@ module Vigia
           skip              if instance.skip?(self)     || (respond_to?(:skip?)     and send(:skip?))
           skip('__vigia__') if instance.disabled?(self) || (respond_to?(:disabled?) and send(:disabled?))
 
-          instance_exec(&instance.options[:expectation]) # FIXME
+          instance_exec(&instance.options[:expectation])
         end
       end
 

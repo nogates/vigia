@@ -17,7 +17,7 @@ require_relative 'vigia/sail/rspec_object'
 require_relative 'vigia/sail/example'
 require_relative 'vigia/sail/context'
 require_relative 'vigia/sail/group'
-require_relative 'vigia/sail/described_class'
+require_relative 'vigia/sail/group_instance'
 require_relative 'vigia/url'
 require_relative 'vigia/version'
 

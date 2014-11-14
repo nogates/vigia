@@ -86,8 +86,7 @@ describe Vigia::Config do
   end
 
   it_behaves_like 'has hooks for', :context, Vigia::Sail::Context
-  it_behaves_like 'has hooks for', :group,   Vigia::Sail::Group
-  it_behaves_like 'has hooks for', :example, Vigia::Sail::Example
+  it_behaves_like 'has hooks for', :group,   Vigia::Sail::GroupInstance
 
   describe '#add_custom_examples_on' do
     before do

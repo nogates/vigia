@@ -7,9 +7,7 @@ module Vigia
         def setup_and_run(name, rspec)
           name, options  = collection.select{ |k,v| k == name }.first
           instance       = new(name, options, rspec)
-          instance.with_hooks do
-            instance.run
-          end
+          instance.run
         end
       end
 
@@ -22,9 +20,9 @@ module Vigia
 
       end
 
-      def execute_hook(filter_name)
+      def execute_hook(filter_name, rspec_context)
         hooks_for_object(filter_name).each do |hook|
-          rspec.instance_exec(&hook)
+          rspec_context.instance_exec(&hook)
         end
       end
 
@@ -32,10 +30,10 @@ module Vigia
         config_hooks(filter_name) + object_hooks(filter_name)
       end
 
-      def with_hooks
-        execute_hook(:before)
+      def with_hooks(rspec_context)
+        execute_hook(:before, rspec_context)
         yield
-        execute_hook(:after)
+        execute_hook(:after, rspec_context)
       end
 
       def contextual_object(option_name: nil, object: nil, context: nil)
