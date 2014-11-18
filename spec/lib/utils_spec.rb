@@ -9,7 +9,7 @@ describe 'Utils methods' do
         Vigia::ExampleTest.apib.ast.resource_groups.first
       end
       it 'returns the proper description' do
-        expect(description_for(object)).to eql('Resource Group: Scenarios')
+        expect(description_for(object)).to eql('Resource Group: Scenarios 1')
       end
     end
     context 'when object is a RedSnow::Resource' do
@@ -17,7 +17,7 @@ describe 'Utils methods' do
         Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first
       end
       it 'returns the proper description' do
-        expect(description_for(object)).to eql('Resource: Scenarios (/scenarios{?page,sort})')
+        expect(description_for(object)).to eql('Resource: 1.1 Scenarios (/scenarios{?page,sort})')
       end
     end
     context 'when object is a RedSnow::Action' do
@@ -25,7 +25,7 @@ describe 'Utils methods' do
         Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first
       end
       it 'returns the proper description' do
-        expect(description_for(object)).to eql('Action: Retrieve all Scenarios (GET)')
+        expect(description_for(object)).to eql('Action: 1.1.1 Retrieve all Scenarios (GET)')
       end
     end
     context 'when object is a RedSnow::Payload' do

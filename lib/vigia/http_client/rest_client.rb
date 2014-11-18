@@ -3,8 +3,12 @@ module Vigia
     class RestClient
       attr_accessor :code, :headers, :body
 
-      def initialize(http_options)
-        @http_options = http_options
+      def initialize(http_client_options)
+        @http_client_options = http_client_options
+      end
+
+      def run
+        cache_or_perform_request
       end
 
       def run!
@@ -13,26 +17,46 @@ module Vigia
 
       private
 
+      # FIXME move cache to HttpClient::Base
+      def cache_or_perform_request
+        if cache.has_key?(request_key)
+          cache[request_key]
+        else
+          @@cache[request_key] = perform_request
+        end
+      end
+
+      def cache
+        @@cache ||= {}
+      end
+
+      def request_key
+        hash = @http_client_options.to_h.select do |k,v|
+          [ :headers, :method, :url, :payload ].include?(k)
+        end
+        Digest::MD5.hexdigest(hash.to_s)
+      end
+
       # :nocov:
       def parse_request(rest_client_result)
-        {
-          code: rest_client_result.code,
+        Vigia::HttpClient::ClientRequest.new(
+          code:    rest_client_result.code,
           headers: rest_client_result.headers,
-          body: rest_client_result.body
-        }
+          body:    rest_client_result.body
+        )
       end
 
       def error_request(exception)
-        {
-          code: exception.http_code, # Todo. Parse each exception
+        Vigia::HttpClient::ClientRequest.new(
+          code:    exception.http_code, # Todo. Parse each exception
           headers: exception.response.headers,
-          body: exception.response
-        }
+          body:    exception.response
+        )
       end
 
       def perform_request
         begin
-          request = ::RestClient::Request.execute(@http_options)
+          request = ::RestClient::Request.execute(@http_client_options.to_h)
           parse_request(request)
         rescue ::RestClient::Exception => exception
           error_request(exception)
