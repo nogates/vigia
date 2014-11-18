@@ -11,7 +11,7 @@ Vigia
 
 Vigia is a gem to perform integration tests using RSpec and a compatible adapter (See [Adapters](#adapters)). The adapter creates the structure of the test (groups and context) and sets up all the variables (See [Context variables](#context_variables)) used to perform the http request.
 
-These result and expectations objects can be used to run examples that will compare the expected value with the server response value. Vigia allows to use a variety of different ways to execute these comparisions (See [Vigia Examples](#vigia_examples) and [Custom Shared Examples](#vigia_shared_examples))
+These results and expectations objects can be used to run examples that will compare the expected value with the server response value. Vigia allows to use a variety of different ways to execute these comparisons (See [Vigia Examples](#vigia_examples) and [Custom Shared Examples](#vigia_shared_examples))
 
 # Installation
 
@@ -35,9 +35,7 @@ Now, Vigia can be used inside your application.
 
 # Getting started
 
-## Simplest example
-
-This example shows an easy way to start a rails server an perform you apibs test.
+This example shows an easy way to start a rails server and perform you apibs test.
 
 ```ruby
 # Your lib/tasks/vigia.rake
@@ -62,19 +60,19 @@ end
 
 ## Configuration
 
-Vigia provides an easy way to configure the parameters of the test, but also has enough flexibility in case that you need to run custom operations during the tests.
+Vigia tries to be flexible enough in case that you need to run custom operations during the tests.
 
 ```ruby
 
 Vigia.configure do |config|
 
-  # Define the your source file. For example, within a Rails app
+  # Define your source file. For example, within a Rails app
   config.source_file = "#{ Rails.root }/apibs/my_api.apib"
 
   # Define the host address where the request will be performed.
   config.host = 'http://localhost:3000'
 
-  # Includes a collection of custom headers in all the requests.
+  # Include a collection of custom headers in all the requests.
   config.headers = { authorization: 'Bearer <your hash here>' }
 
   # Reset rspec_config and set up documentation formatter
@@ -120,7 +118,7 @@ Vigia.configure do |config|
 end
 ```
 
-Then, insde your adapter class, you can use the `setup_adater` method to define the groups and contexts the adapter will provide:
+Then, insde your adapter class, you can use the `setup_adater` method to define the groups and contexts that the adapter will provide:
 
 ```ruby
 
@@ -157,13 +155,13 @@ class MyBlogAdapter < Vigia::Adapter
 end
 ```
 
-When vigia starts, it will fetch the first group defined as primary. For each group, Vigia will loop on each element of the describes option (`:post, :page` in this example), and will set a rspec memoizer named as the group (`let(:resource) { :post }`). Then, it will run the children (if any) and the contexts in this group, setting up the `http_client_options` and `expectations` memoizers per context.
+When vigia starts, it fetchs the first group defined as primary. For each group, Vigia will loop on each element of the describes option (`:post, :page` in this example), and will set a rspec memoized object named as the group (`let(:resource) { :post }`). Then, it will run the children (if any) and the contexts in this group, setting up the `http_client_options` and `expectations` memoized objects per context.
 
 See `Vigia::Adapters::Blueprint` class for more information about configuring and setting up an adapter.
 
 ## Context Variables
 
-Vigia tries to be consistent with the way the RSpec are normally written. It creates the describe groups and context based on the adapter configuration and set up all the variables for the examples by using RSpec memoizers
+Vigia tries to be consistent with the way the RSpec are normally written. It creates the describe groups and context based on the adapter configuration and set up all the variables for the examples by using RSpec memoized objects.
 
 ```ruby
 
@@ -214,7 +212,7 @@ describe Vigia::RSpec do
 end
 ```
 
-Also, It is important to mention that it is in this context where the adapter configuration will executed. In the previous example, we configured the http_client option as follows:
+Also, It is important to mention that it is in this context where the adapter configuration will be executed. In the previous example, we configured the http_client option as follows:
 
 ```ruby
 #   http_client_options: {
@@ -223,14 +221,14 @@ Also, It is important to mention that it is in this context where the adapter co
 #     headers: :headers
 ```
 
-The option `method` is a lambda object. This object will be executed inside the memoizer RSpec context. It is the same as doing:
+The option `method` is a lambda object. This object will be executed inside the RSpec memoized objects context. It is the same as doing:
 
 ```ruby
-  # it has access to all context/group memoizers
+  # it has access to all context/group memoized objects
   let(:method) { action.to_s.upcase }
 ```
 
-You can also use the adapter like in option `url`, since it has been defined as a memoizer by Vigia::RSpec.
+You can also use the adapter like in option `url`, since it has been defined as a memoized object by Vigia::RSpec.
 
 Lastly, you can specify a symbol as the option value. In this case, the adapter will be the reciever of this method.
 
@@ -261,7 +259,7 @@ Vigia.configure do |config|
 
   # Define the custom examples you want to include in your test
 
-  # To the example in all your request use `:all` symbol
+  # To the example in all your requests use `:all` symbol
   config.add_custom_examples_on(:all, 'my custom examples')
 end
 ```
