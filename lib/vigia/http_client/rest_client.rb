@@ -37,7 +37,6 @@ module Vigia
         Digest::MD5.hexdigest(hash.to_s)
       end
 
-      # :nocov:
       def parse_request(rest_client_result)
         Vigia::HttpClient::ClientRequest.new(
           code:    rest_client_result.code,
@@ -50,7 +49,7 @@ module Vigia
         Vigia::HttpClient::ClientRequest.new(
           code:    exception.http_code, # Todo. Parse each exception
           headers: exception.response.headers,
-          body:    exception.response
+          body:    exception.http_body
         )
       end
 
@@ -62,7 +61,6 @@ module Vigia
           error_request(exception)
         end
       end
-      # :nocov:
     end
   end
 end
