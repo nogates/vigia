@@ -24,6 +24,12 @@ describe Vigia::Config do
       it 'has a http_client_class getter with default value' do
         expect(subject.http_client_class).to eql(Vigia::HttpClient::RestClient)
       end
+      it 'has a stdeout with the default value' do
+        expect(subject.stdout).to eql($stdout)
+      end
+      it 'has a stderr with the default value' do
+        expect(subject.stderr).to eql($stderr)
+      end
     end
   end
 

@@ -1,6 +1,7 @@
 module Vigia
   class Config
-    attr_accessor :source_file, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class, :adapter, :hooks, :rspec_config_block
+    attr_accessor :source_file, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class
+    attr_accessor :adapter, :hooks, :rspec_config_block, :stderr, :stdout
 
     def initialize
       @host                  = nil
@@ -10,6 +11,8 @@ module Vigia
       @custom_examples_paths = []
       @custom_examples       = []
       @hooks                 = []
+      @stderr                = $stderr
+      @stdout                = $stdout
       @adapter               = Vigia::Adapters::Blueprint
       @http_client_class     = Vigia::HttpClient::RestClient
     end
