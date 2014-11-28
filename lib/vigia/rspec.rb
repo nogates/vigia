@@ -25,7 +25,7 @@ module Vigia
     def run!
       with_rspec_options do
         RSpec::Core::Runner::run(
-          [ Vigia.spec_folder ], $stderr, $stdout)
+          [ Vigia.spec_folder ], Vigia.config.stderr, Vigia.config.stdout)
       end
     end
 
