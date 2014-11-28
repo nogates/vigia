@@ -4,7 +4,7 @@ module Vigia
 
       def run
         instance = self
-        rspec.context do
+        rspec.context instance.to_s do
           instance.with_hooks(self) do
             let(:http_client_options) { instance.set_http_client_options(self) }
             let(:expectations)        { instance.set_expectations(self) }
@@ -39,6 +39,10 @@ module Vigia
             in_context.include_examples example_name
           end
         end
+      end
+
+      def to_s
+        "context #{ name }"
       end
 
       private
