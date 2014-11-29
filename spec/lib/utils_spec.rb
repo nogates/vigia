@@ -3,40 +3,6 @@ require 'spec_helper'
 require_relative '../../lib/vigia/spec/support/utils'
 
 describe 'Utils methods' do
-  describe '#description_for' do
-    context 'when object is a RedSnow::ResourceGroup' do
-      let(:object) do
-        Vigia::ExampleTest.apib.ast.resource_groups.first
-      end
-      it 'returns the proper description' do
-        expect(description_for(object)).to eql('Resource Group: Scenarios 1')
-      end
-    end
-    context 'when object is a RedSnow::Resource' do
-      let(:object) do
-        Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first
-      end
-      it 'returns the proper description' do
-        expect(description_for(object)).to eql('Resource: 1.1 Scenarios (/scenarios{?page,sort})')
-      end
-    end
-    context 'when object is a RedSnow::Action' do
-      let(:object) do
-        Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first
-      end
-      it 'returns the proper description' do
-        expect(description_for(object)).to eql('Action: 1.1.1 Retrieve all Scenarios (GET)')
-      end
-    end
-    context 'when object is a RedSnow::Payload' do
-      let(:object) do
-        Vigia::ExampleTest.apib.ast.resource_groups.first.resources.first.actions.first.examples.first.responses.first
-      end
-      it 'returns the proper description' do
-        expect(description_for(object)).to eql('Response: 200')
-      end
-    end
-  end
   describe '#format_error' do
 
     let(:result)      { instance_double(Hash, inspect: 'Inspecting Result') }
