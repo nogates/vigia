@@ -3,7 +3,7 @@
 require 'redsnow'
 require 'rspec'
 require 'rest_client'
-require 'uri_template'
+require 'addressable/template'
 
 require_relative 'vigia/adapter'
 require_relative 'vigia/adapters/blueprint'
