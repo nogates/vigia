@@ -1,0 +1,142 @@
+FORMAT: 1A
+HOST: http://myblog.com/
+
+# Example API
+API FTW
+
+# Group Posts
+
+## Posts [/posts{?page,sort}]
+This resource represents the collection of all posts
+
+### 1.1.1 Retrieve all s [GET]
+Retrieve all posts.
+
++ Parameters
+    + page (string, `1`) ... Page result number.
+    + sort (string, `name`) ... Attribute to sort by.
+
+
++ Response 200 (application/json; charset=utf-8)
+
+        {
+          "slug"  : "my-awesome-first-post",
+          "title" : "My awesome first post",
+          "body"  : "Here is my post. It is a short one!"
+
+        }
+
+### 1.1.2 Create s [POST]
+Create one posts.
+
++ Request (application/json)
+
+        [
+          {
+            "title" : "Second post!!",
+            "body"  : "I am on fire"
+          }
+        ]
+
++ Response 201 (application/json; charset=utf-8)
+        {
+          "slug"  : "second-post",
+          "title" : "Second post!!",
+          "body"  : "I am on fire"
+        }
+
+## 1.2 Post [/posts/{slug}]
+This resource represents a single Post.
+
+### 1.2.1 Retrieve a Post [GET]
+Retrieve a Post.
+
++ Parameters
+    + slug (string, required, `my-awesome-first-post`) ... The unique identifier of the post.
+
++ Response 200 (application/json; charset=utf-8)
+  + Body
+
+        {
+          "title" : "Second post!!",
+          "body"  : "I am on fire"
+        }
+
+
+# Group Comments
+
+## Comments [/posts/{post_slug}/comments{?number}]
+This resource represents a collection of Post's Comments.
+
+### 2.1.1 Retrieve all Comments of a Post [GET]
+Retrieve all Comments
+
++ Parameters
+    + post_slug (string, `my-awesome-first-post`) ... Post slug
+    + number (string, `10`) ... Amount of comments to show.
+
++ Response 200 (application/json; charset=utf-8)
+
+        {
+          "title"     : "Lurker",
+          "body"      : "First!",
+          "post_slug" : "my-awesome-first-post"
+        }
+
+### 2.1.2 Create a Comment [POST]
+Create a Comment
+
++ Parameters
+    + post_slug (string, `my-awesome-first-post`) ... Post slug
+
++ Request (application/json)
+
+        {
+          "title"     : "Hey yo!",
+          "body"      : "Not bad,
+        }
+
++ Response 201 (application/json; charset=utf-8)
+
+        {
+          "title"     : "Hey yo!",
+          "body"      : "Not bad",
+          "post_slug" : "my-awesome-first-post"
+        }
+
+## 2.2 Comment [/posts/{post_slug}/comments/{id}]
+This resource represents a single Comments
+
+### 2.2.1 Update a Comment [PUT]
+Update a Comment
+
++ Parameters
+    + post_slug (string, `my-awesome-first-post`) ... Post slug
+    + id (required,number,`2`) ... An unique identifier of the Comment.
+
+
++ Request (application/json)
+
+        {
+          "title"     : "Hey yo!",
+          "body"      : "Updated"
+        }
+
++ Response 201 (application/json; charset=utf-8)
+
+        {
+          "title"     : "Hey yo!",
+          "body"      : "Updated",
+          "post_slug": "my-awesome-first-post"
+        }
+
+
+### 2.2.2 Delete a Comment [DELETE]
+Delete a Comment
+
++ Parameters
+    + post_slug (required, string, `my-awesome-first-post`) ... Post slug
+    + id (required,number,`2`) ... An unique identifier of the Comment.
+
++ Response 204
+
