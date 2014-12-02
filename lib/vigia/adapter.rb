@@ -9,6 +9,10 @@ module Vigia
         @template = block
       end
 
+      def template
+        @template
+      end
+
       def instance
         new.tap do |object|
           object.source_file = Vigia.config.source_file

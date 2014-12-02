@@ -49,8 +49,7 @@ module Vigia
             code:    -> { response.name.to_i },
             headers: -> { adapter.headers_for(resource, action, transactional_example, response, include_payload = false) },
             body:    -> { response.body }
-          },
-          after_context: -> {  }
+          }
       end
 
       def headers_for(resource, action, transactional_example, response, include_payload = true)
