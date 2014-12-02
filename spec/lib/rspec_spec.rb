@@ -16,6 +16,27 @@ describe Vigia::Rspec do
     allow(Vigia).to receive(:config).and_return(config)
   end
 
+
+  describe '::include_shared_folders' do
+    before do
+      allow(described_class).to receive(:require)
+      allow(config).to receive(:custom_examples_paths).and_return([ 'a', 'b' ])
+    end
+
+    after do
+      described_class.include_shared_folders
+    end
+
+    it 'requires the utils file' do
+      expect(described_class).to receive(:require).with(/vigia\/lib\/vigia\/spec\/support\/utils$/)
+    end
+
+    it 'requires the custom_examples_paths' do
+      expect(described_class).to receive(:require).with('a')
+      expect(described_class).to receive(:require).with('b')
+    end
+  end
+
   describe '#run!' do
     let(:stdout) { 'output' }
     let(:stderr) { 'error output' }
@@ -26,7 +47,7 @@ describe Vigia::Rspec do
       subject.run!
     end
 
-    it 'calls the rspec to run the specfolder with the right options' do
+    it 'calls the rspec to run the spec folder with the right options' do
       expect(RSpec::Core::Runner).to have_received(:run)
         .with(['spec_folder'], 'error output', 'output').once
     end
