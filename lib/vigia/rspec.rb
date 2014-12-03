@@ -8,8 +8,6 @@ module Vigia
       def include_shared_folders
         require_custom_examples
         require "#{ __dir__ }/spec/support/utils"
-        require "#{ __dir__ }/spec/support/shared_examples/skip_example"
-        require "#{ __dir__ }/spec/support/shared_examples/apib_example"
       end
 
       private
@@ -25,7 +23,7 @@ module Vigia
     def run!
       with_rspec_options do
         RSpec::Core::Runner::run(
-          [ Vigia.spec_folder ], $stderr, $stdout)
+          [ Vigia.spec_folder ], Vigia.config.stderr, Vigia.config.stdout)
       end
     end
 
