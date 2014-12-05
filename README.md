@@ -269,7 +269,7 @@ Then, create your Rspec shared example and name the examples accordingly
 ```ruby
 # /my_project/shared_examples/apib_examples.rb
 
-shared_examples 'my custom examples' do |vigia_example, response|
+shared_examples 'my custom examples' do
   it 'is a valid json response' do
     expect { JSON.parse(result.body) }.not_to raise_error
   end
