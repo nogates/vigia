@@ -22,9 +22,10 @@ module Vigia
         instance = self
         rspec.it instance do
           skip              if instance.skip?(self)     || (respond_to?(:skip?)     and send(:skip?))
-          skip('__vigia__') if instance.disabled?(self) || (respond_to?(:disabled?) and send(:disabled?))
 
-          instance_exec(&instance.expectation)
+          unless instance.disabled?(self) || (respond_to?(:disabled?) and send(:disabled?))
+            instance_exec(&instance.expectation)
+          end
         end
       end
 
