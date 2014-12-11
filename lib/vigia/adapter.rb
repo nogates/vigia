@@ -43,8 +43,8 @@ module Vigia
       def preload
         instance_exec(&template)
 
-        Vigia::Sail::Group.collection   = groups
-        Vigia::Sail::Context.collection = contexts
+        groups.each   { |name, options| Vigia::Sail::Group.register(name, options) }
+        contexts.each { |name, options| Vigia::Sail::Context.register(name, options) }
       end
 
       def after_initialize(&block)

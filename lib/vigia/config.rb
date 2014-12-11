@@ -1,12 +1,13 @@
 module Vigia
   class Config
     attr_accessor :source_file, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class
-    attr_accessor :adapter, :hooks, :rspec_config_block, :stderr, :stdout
+    attr_accessor :adapter, :hooks, :rspec_config_block, :stderr, :stdout, :internal_hosts
 
     def initialize
       @host                  = nil
       @source_file           = nil
       @rspec_config_block    = nil
+      @internal_hosts        = []
       @headers               = {}
       @custom_examples_paths = []
       @custom_examples       = []
@@ -42,12 +43,20 @@ module Vigia
       store_hook(Vigia::Sail::GroupInstance, :after, block)
     end
 
+    def extend_group(&block)
+      store_hook(Vigia::Sail::GroupInstance, :extend, block)
+    end
+
     def before_context(&block)
       store_hook(Vigia::Sail::Context, :before, block)
     end
 
     def after_context(&block)
       store_hook(Vigia::Sail::Context, :after, block)
+    end
+
+    def extend_context(&block)
+      store_hook(Vigia::Sail::Context, :extend, block)
     end
 
     def store_hook(rspec_class, filter, block)

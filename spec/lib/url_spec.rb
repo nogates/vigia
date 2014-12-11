@@ -25,6 +25,16 @@ describe Vigia::Url do
     described_class.new uri_template
   end
 
+  describe '::template_defines_url?' do
+    it 'returns true if the url matches the template' do
+      expect(described_class.template_defines_url?('/a_resource/{id}', '/a_resource/test')).to be true
+    end
+
+    it 'returns false if the url does not match the template' do
+      expect(described_class.template_defines_url?('/a_resource/{id}', '/a_resourcetest')).to be false
+    end
+  end
+
   describe '#expand' do
     before do
       allow(subject).to receive(:host).and_return('http://this-example.com')
