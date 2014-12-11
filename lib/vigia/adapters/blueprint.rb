@@ -39,7 +39,7 @@ module Vigia
 
         context :default,
           http_client_options: {
-            headers:      -> { adapter.headers_for(resource, action, transactional_example, response) },
+            headers:      -> { adapter.headers_for(action, transactional_example, response) },
             method:       -> { action.method },
             uri_template: -> { resource.uri_template },
             parameters:   -> { adapter.parameters_for(resource, action) },
@@ -47,13 +47,13 @@ module Vigia
           },
           expectations: {
             code:    -> { response.name.to_i },
-            headers: -> { adapter.headers_for(resource, action, transactional_example, response, include_payload = false) },
+            headers: -> { adapter.headers_for(action, transactional_example, response, include_payload = false) },
             body:    -> { response.body }
           }
       end
 
-      def headers_for(resource, action, transactional_example, response, include_payload = true)
-        headers  = headers_for_response(resource, response)
+      def headers_for(action, transactional_example, response, include_payload = true)
+        headers  = headers_for_response(response)
         headers += headers_for_payload(transactional_example, response) if with_payload?(action) && include_payload
         compile_headers(headers)
       end
@@ -73,6 +73,22 @@ module Vigia
         payload.body
       end
 
+      def host
+        apib.metadata['host']
+      end
+
+      def action_by(method, url)
+        resources.select do |resource|
+            Vigia::Url.template_defines_url?(resource.uri_template, url)
+        end.map(&:actions).flatten.select do |action|
+          action.method == method
+        end.first # ?
+      end
+
+      def action_exists?(method, url)
+        not action_by(method, url).nil?
+      end
+
       private
 
       def compile_headers(headers)
@@ -82,12 +98,16 @@ module Vigia
         end
       end
 
-      def headers_for_response(resource, response)
+      def headers_for_response(response)
         collection = []
-        collection << [*resource.model.headers.collection]
         collection << [*response.headers.collection]
         collection.flatten
       end
+
+      def resources
+        apib.resource_groups.map(&:resources).flatten
+      end
+
 
       def headers_for_payload(transactional_example, response)
         payload = get_payload(transactional_example, response)
