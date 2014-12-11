@@ -8,6 +8,7 @@ require 'addressable/template'
 require_relative 'vigia/adapter'
 require_relative 'vigia/adapters/blueprint'
 require_relative 'vigia/config'
+require_relative 'vigia/hooks'
 require_relative 'vigia/http_client/options'
 require_relative 'vigia/http_client/rest_client'
 require_relative 'vigia/http_client/requests'
@@ -39,3 +40,6 @@ module Vigia
     end
   end
 end
+
+require_relative 'vigia/sail/examples/default'
+require_relative 'vigia/sail/examples/siren_api'
