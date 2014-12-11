@@ -30,6 +30,9 @@ describe Vigia::Config do
       it 'has a stderr with the default value' do
         expect(subject.stderr).to eql($stderr)
       end
+      it 'has an internal_hosts method with the default value' do
+        expect(subject.internal_hosts).to eql([])
+      end
     end
   end
 
