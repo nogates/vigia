@@ -70,6 +70,14 @@ Scenario: Using the blueprint adapter with hooks
   Then I configure Vigia with the following options:
     | source_file      | my_blog/my_blog.apib   |
     | host             | my_blog.host           |
+  Then I configure a "after_group" hook with this block:
+    """
+      'a simple string'
+    """
+  Then I configure a "after_context" hook with this block:
+    """
+      'TODO'
+    """
   Then I configure a "extend_group" hook with this block:
     """
       group_name = described_class.described_object.name

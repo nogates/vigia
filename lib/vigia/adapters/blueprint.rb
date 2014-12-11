@@ -73,22 +73,6 @@ module Vigia
         payload.body
       end
 
-      def host
-        apib.metadata['host']
-      end
-
-      def action_by(method, url)
-        resources.select do |resource|
-            Vigia::Url.template_defines_url?(resource.uri_template, url)
-        end.map(&:actions).flatten.select do |action|
-          action.method == method
-        end.first # ?
-      end
-
-      def action_exists?(method, url)
-        not action_by(method, url).nil?
-      end
-
       private
 
       def compile_headers(headers)
@@ -104,9 +88,9 @@ module Vigia
         collection.flatten
       end
 
-      def resources
-        apib.resource_groups.map(&:resources).flatten
-      end
+#       def resources
+#         apib.resource_groups.map(&:resources).flatten
+#       end
 
 
       def headers_for_payload(transactional_example, response)
