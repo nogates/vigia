@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rest-client'
   spec.add_dependency 'rspec'
   spec.add_dependency 'addressable'
+  spec.add_dependency 'siren'
+  spec.add_dependency 'addressable'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'sinatra'
