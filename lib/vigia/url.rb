@@ -1,7 +1,19 @@
 require 'uri'
+require 'addressable/template'
+require 'addressable/uri'
+
 
 module Vigia
   class Url
+    class << self
+      def template_defines_url?(template, url)
+        url_object      = Addressable::URI.parse(url)
+        template_object = Addressable::Template.new(template)
+        url_parameters  = template_object.extract(url_object) || {}
+        # recreate url and see if matches
+        template_object.expand(url_parameters) == url_object
+      end
+    end
 
     attr_reader :uri_template
 
