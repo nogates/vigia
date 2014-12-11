@@ -83,7 +83,7 @@ describe Vigia::Config do
         subject.send("#{ filter }_#{ rspec_object_name }", &block)
       end
 
-      [ :after, :before ].each do |filter|
+      [ :after, :extend, :before ].each do |filter|
         context "when calling #{ filter }_#{ rspec_object_name }" do
           let(:filter) { 'before' }
           it 'calls the store hook method with the right parameters' do
