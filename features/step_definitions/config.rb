@@ -9,13 +9,16 @@ Then(/^I configure Vigia with the following options:$/) do |config_table|
       elsif name == 'host'
         app, method = value.split('.')
         config.host = @running_apps[app].send(method)
-      else
-        config.send("#{ name }=", value)
       end
     end
+
     config.rspec_config do |rspec_config|
       rspec_config.reset
-      rspec_config.formatter = RSpec::Core::Formatters::DocumentationFormatter
+      if config_table.rows_hash.has_key?('rspec_formatter')
+        rspec_config.formatter = eval(config_table.rows_hash['rspec_formatter'])
+      else
+        rspec_config.formatter = RSpec::Core::Formatters::DocumentationFormatter
+      end
     end
 
     config.stderr = @stderr

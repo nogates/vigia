@@ -70,15 +70,15 @@ Scenario: Using the blueprint adapter with hooks
   Then I configure Vigia with the following options:
     | source_file      | my_blog/my_blog.apib   |
     | host             | my_blog.host           |
-  Then I configure a "after_group" hook with this block:
+  And I configure a "after_group" hook with this block:
     """
       'a simple string'
     """
-  Then I configure a "after_context" hook with this block:
+  And I configure a "after_context" hook with this block:
     """
       'TODO'
     """
-  Then I configure a "extend_group" hook with this block:
+  And I configure a "extend_group" hook with this block:
     """
       group_name = described_class.described_object.name
 
@@ -88,7 +88,7 @@ Scenario: Using the blueprint adapter with hooks
         expect(group_name).to eql(described_class.described_object.name)
       end
     """
-  Then I configure a "extend_context" hook with this block:
+  And I configure a "extend_context" hook with this block:
     """
       let(:full_string_name) do
         "#{ resource_group.name }#{ resource.name }#{ action.name }#{ transactional_example.name }#{ response.name }"
@@ -190,4 +190,40 @@ Scenario: Using the blueprint adapter with hooks
 
     """
   And the total tests line should equal "48 examples, 0 failures"
+  And the error output should be empty
+
+Scenario: Using the blueprint adapter with Vigia::Formatter
+  Given the server for "my_blog" app is ready
+  Then I configure Vigia with the following options:
+    | source_file      | my_blog/my_blog.apib   |
+    | host             | my_blog.host           |
+    | rspec_formatter  | Vigia::Formatter       |
+  And I configure a "extend_context" hook with this block:
+  """
+    it 'will fail this example when running comments DELETE' do
+      expect(false).to be(true) if action.method == 'DELETE'
+    end
+  """
+  Then I run Vigia
+  And the output should contain the following:
+  """
+  Starting Vigia::RSpec
+  .....................
+  Context `context default` FAILED:
+
+   - Example: will fail this example when running comments DELETE
+
+  expected true
+       got false
+
+
+  Groups:
+    - response Running Response 204 # {SOURCE_FILE}:142
+    - transactional_example Example #0 # {SOURCE_FILE}:142
+    - action DELETE # {SOURCE_FILE}:134
+    - resource Resource: 2.2 Comment # {SOURCE_FILE}:107
+    - resource_group Resource Group: Comments # {SOURCE_FILE}:66
+
+  """
+  And the total tests line should equal "21 examples, 1 failure"
   And the error output should be empty
