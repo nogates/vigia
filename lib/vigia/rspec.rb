@@ -57,6 +57,7 @@ module Vigia
     end
 
     def configure_vigia_rspec(rspec_config)
+      rspec_config.formatter = Vigia::Formatter
       return unless Vigia.config.rspec_config_block.respond_to?(:call)
       Vigia.config.rspec_config_block.call(rspec_config)
     end
