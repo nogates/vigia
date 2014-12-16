@@ -21,10 +21,8 @@ module Vigia
     end
 
     def run!
-      with_rspec_options do
-        RSpec::Core::Runner::run(
-          [ Vigia.spec_folder ], Vigia.config.stderr, Vigia.config.stdout)
-      end
+      RSpec::Core::Runner::run(
+        [ Vigia.spec_folder ], Vigia.config.stderr, Vigia.config.stdout)
     end
 
     def start_tests(rspec)

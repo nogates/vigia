@@ -52,9 +52,5 @@ describe Vigia::Rspec do
       expect(RSpec::Core::Runner).to have_received(:run)
         .with(['spec_folder'], 'error output', 'output').once
     end
-
-    it 'calls the configure_vigia_rspec' do
-      expect(subject).to have_received(:configure_vigia_rspec)
-    end
   end
 end
