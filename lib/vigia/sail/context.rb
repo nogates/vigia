@@ -3,16 +3,7 @@ module Vigia
     class Context < RSpecObject
 
       def run
-        instance = self
-        rspec.context instance.to_s do
-          instance.with_hooks(self) do
-            let(:http_client_options) { instance.set_http_client_options(self) }
-            let(:expectations)        { instance.set_expectations(self) }
-
-            instance.run_examples(self)
-            instance.run_shared_examples(self)
-          end
-        end
+        run_rspec_context unless disabled?
       end
 
       def set_http_client_options(in_let_context)
@@ -45,6 +36,22 @@ module Vigia
         "context #{ name }"
       end
 
+      def run_rspec_context
+        instance = self
+        rspec.context instance.to_s do
+
+          define_singleton_method("context_#{ instance.name }", ->{ instance })
+
+          instance.with_hooks(self) do
+            let(:http_client_options) { instance.set_http_client_options(self) }
+            let(:expectations)        { instance.set_expectations(self) }
+
+            instance.run_examples(self)
+            instance.run_shared_examples(self)
+          end
+        end
+      end
+
       private
 
       def custom_examples
@@ -60,6 +67,11 @@ module Vigia
 
       def default_expectations
         [ :code, :headers, :body ]
+      end
+
+      def disabled?
+        return false unless options[:disable_if]
+        contextual_object(option_name: :disable_if)
       end
     end
   end

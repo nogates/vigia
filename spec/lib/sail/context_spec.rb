@@ -17,6 +17,27 @@ describe Vigia::Sail::Context do
     end
   end
 
+  describe '#run' do
+    after do
+      subject.run
+    end
+
+    context 'when disabled' do
+      let(:options) { { disable_if: true } }
+
+      it 'does not call run_rspec_context' do
+        expect(subject).not_to receive(:run_rspec_context)
+      end
+    end
+    context 'when not disabled' do
+      let(:options) { { disable_if: false } }
+
+      it 'does call run_rspec_context' do
+        expect(subject).to receive(:run_rspec_context)
+      end
+    end
+  end
+
   describe '#run_shared_examples' do
     let(:config) do
       instance_double(Vigia::Config, custom_examples: custom_examples)
@@ -26,7 +47,7 @@ describe Vigia::Sail::Context do
     before do
       allow(Vigia).to receive(:config).and_return(config)
     end
-    
+
     context 'when context has custom examples' do
       let(:custom_examples) do
         [ { name: 'test', filter: :all },
