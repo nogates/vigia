@@ -3,6 +3,11 @@ module Vigia
 
     def execute_hook(filter_name, rspec_context)
       hooks_for_object(filter_name).each do |hook|
+        if self.is_a?(Vigia::Sail::Context)
+          instance = self
+          rspec_context.define_singleton_method(:vigia_context, -> { instance })
+        end
+
         rspec_context.instance_exec(&hook)
       end
     end
