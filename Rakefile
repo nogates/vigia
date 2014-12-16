@@ -14,5 +14,9 @@ task :clobber do
 end
 
 # Not sure why simplecov is preventing cucumber for being run after spec
-# when running rake default
-task :default => [ :spec, :cucumber ]
+# when running rake default. That is why I am using commands to execute them
+task :default do
+  raise 'Cucumber Failed' unless system('bundle exec rake cucumber')
+  raise 'RSpec Failed'    unless system('bundle exec rake spec')
+end
+
