@@ -12,8 +12,17 @@ describe Vigia::Sail::Context do
   end
 
   describe '#to_s' do
-    it 'outputs the context name' do
-      expect(subject.to_s).to eql('context example_context')
+    context 'when the description option has been defined' do
+      let(:options) { { description: 'a context name' } }
+
+      it 'outputs the context name' do
+        expect(subject.to_s).to eql('a context name')
+      end
+    end
+    context 'when description option is not defined' do
+      it 'outputs the context name' do
+        expect(subject.to_s).to eql('context example_context')
+      end
     end
   end
 

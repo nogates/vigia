@@ -33,7 +33,7 @@ module Vigia
       end
 
       def to_s
-        "context #{ name }"
+        (contextual_object(option_name: :description) || "context #{ name }").to_s
       end
 
       def run_rspec_context
