@@ -6,6 +6,72 @@ describe Vigia::Sail::Example do
   let(:rspec_context) { double(described_class: testing_described_class) }
   let(:testing_described_class) { double }
 
+  describe '::example_contexts_include?' do
+    let(:context)          { double(options: context_options, name: context_name) }
+    let(:example_name)     { :a_random_example }
+    let(:enabled_contexts) { nil }
+    let(:context_options)  { {} }
+    let(:context_name)     { :a_test_context }
+
+    context 'when the context defines an examples option' do
+      context 'when the example name is listed in the option' do
+        let(:context_options)  { { examples: [ :a_random_example] } }
+
+        it 'returns true' do
+          expect(described_class.example_contexts_include?(context, example_name, enabled_contexts))
+            .to be true
+        end
+      end
+
+      context 'when the example name is not listed in the option' do
+        let(:context_options)  { { examples: [ :a_not_so_random_example] } }
+
+        it 'returns false' do
+          expect(described_class.example_contexts_include?(context, example_name, enabled_contexts))
+            .to be false
+        end
+      end
+    end
+
+    context 'when the example specifies the context option' do
+      let(:enabled_contexts) { [:a_test_context] }
+
+      context 'when the context name matches' do
+        it 'returns true' do
+          expect(described_class.example_contexts_include?(context, example_name, enabled_contexts))
+            .to be true
+        end
+      end
+
+      context 'when the context name does not match' do
+        let(:enabled_contexts) { [:not_the_test_context] }
+
+        it 'returns false' do
+          expect(described_class.example_contexts_include?(context, example_name, enabled_contexts))
+            .to be false
+        end
+      end
+    end
+
+    context 'when no options are used' do
+      context 'when the context is the default' do
+        let(:context_name) { :default }
+
+        it 'returns true' do
+          expect(described_class.example_contexts_include?(context, example_name, enabled_contexts))
+            .to be true
+        end
+      end
+
+      context 'when the context is not the default' do
+        it 'returns false' do
+          expect(described_class.example_contexts_include?(context, example_name, enabled_contexts))
+            .to be false
+        end
+      end
+    end
+  end
+
   subject do
     described_class.new :example_name, options, rspec_context
   end

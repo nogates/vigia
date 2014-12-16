@@ -9,11 +9,12 @@ module Vigia
 
         def run_in_context(context, rspec_context)
           @collection.each do |name, options|
-            setup_and_run(name, rspec_context) if example_contexts_include?(context, options[:contexts])
+            setup_and_run(name, rspec_context) if example_contexts_include?(context, name, options[:contexts])
           end
         end
 
-        def example_contexts_include?(context, enabled_contexts)
+        def example_contexts_include?(context, example_name, enabled_contexts)
+          return context.options[:examples].include?(example_name) if context.options[:examples].is_a?(Enumerable)
           [ *(enabled_contexts || :default) ].include?(context.name)
         end
       end
