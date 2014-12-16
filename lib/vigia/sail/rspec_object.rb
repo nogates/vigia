@@ -10,8 +10,10 @@ module Vigia
         end
 
         def setup_and_run(name, rspec)
-          name, options  = collection.select{ |k,v| k == name }.first
-          instance       = new(name, options, rspec)
+          items = collection.select{ |k,v| k == name }
+          raise "Cannot find #{ self.name } with name #{ name }" if items.empty?
+          name, options = items.first
+          instance      = new(name, options, rspec)
           instance.run
         end
       end
