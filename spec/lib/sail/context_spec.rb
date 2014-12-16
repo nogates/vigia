@@ -8,12 +8,12 @@ describe Vigia::Sail::Context do
 
 
   subject do
-    described_class.new :example_name, options, rspec_context
+    described_class.new :example_context, options, rspec_context
   end
 
   describe '#to_s' do
     it 'outputs the context name' do
-      expect(subject.to_s).to eql('context example_name')
+      expect(subject.to_s).to eql('context example_context')
     end
   end
 
@@ -34,6 +34,35 @@ describe Vigia::Sail::Context do
 
       it 'does call run_rspec_context' do
         expect(subject).to receive(:run_rspec_context)
+      end
+    end
+  end
+
+  describe '#run_children' do
+    let(:context_collection) { {} }
+    let(:rspec_context)      { 'rspec_context' }
+
+    before do
+      allow(described_class).to receive(:collection).and_return(context_collection)
+    end
+
+    after do
+      subject.run_children(rspec_context)
+    end
+
+    context 'when the current context defines children' do
+      let(:options)  { { contexts: :a_context } }
+
+      it 'runs the context' do
+        expect(Vigia::Sail::Context).to receive(:setup_and_run).with(:a_context, rspec_context)
+      end
+    end
+
+    context 'when another context should be executed in this context' do
+      let(:context_collection) { {another_context: { in_contexts: [:example_context] } } }
+
+      it 'runs the context' do
+        expect(Vigia::Sail::Context).to receive(:setup_and_run).with(:another_context, rspec_context)
       end
     end
   end

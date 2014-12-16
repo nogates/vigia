@@ -47,8 +47,15 @@ module Vigia
             let(:expectations)        { instance.set_expectations(self) }
 
             instance.run_examples(self)
+            instance.run_children(self)
             instance.run_shared_examples(self)
           end
+        end
+      end
+
+      def run_children(in_context)
+        children.each do |context_name|
+          Vigia::Sail::Context.setup_and_run(context_name, in_context)
         end
       end
 
@@ -72,6 +79,12 @@ module Vigia
       def disabled?
         return false unless options[:disable_if]
         contextual_object(option_name: :disable_if)
+      end
+
+      def children
+        (self.class.collection.select do |k,v|
+          v.has_key?(:in_contexts) && [ *v[:in_contexts] ].include?(name)
+        end.keys + ([ *options[:contexts] ] || [])).uniq
       end
     end
   end
