@@ -2,12 +2,13 @@ module Vigia
   module Adapters
     class Blueprint < Vigia::Adapter
 
-      attr_reader :apib
+      attr_reader :apib, :apib_source
 
       setup_adapter do
 
         after_initialize do
-          @apib_parsed = RedSnow::parse(File.read(source_file))
+          @apib_source = File.read(source_file)
+          @apib_parsed = RedSnow::parse(@apib_source, { :exportSourcemap => true })
           @apib        = @apib_parsed.ast
         end
 
@@ -73,7 +74,42 @@ module Vigia
         payload.body
       end
 
+      def inspector object
+        case object
+        when RedSnow::ResourceGroup
+          locate_in_sourcemap(:resource_groups, object)
+        when RedSnow::Resource
+          locate_in_sourcemap(:resources, object)
+        when RedSnow::Action
+          locate_in_sourcemap(:actions, object)
+        when RedSnow::TransactionExample
+          first_response = object.responses.first
+          locate_in_sourcemap(:responses, first_response)
+        when RedSnow::Payload
+          locate_in_sourcemap(:responses, object)
+        else
+          nil
+        end
+      end
+
       private
+
+      def locate_in_sourcemap(key, object)
+        node_index  = apib_structure[key].index(object)
+        source_node = apib_sourcemap[key][node_index]
+        character   = source_node.name.first.first
+
+        { line: return_line_number_at_character_count(character) }
+      end
+
+      def return_line_number_at_character_count(number)
+        total_chars = 0
+        @apib_source.lines.each_with_index do |line, index|
+          total_chars += line.length
+          next if total_chars < number
+          return index + 2
+        end
+      end
 
       def compile_headers(headers)
         headers.inject({}) do |hash, header|
@@ -88,10 +124,23 @@ module Vigia
         collection.flatten
       end
 
-#       def resources
-#         apib.resource_groups.map(&:resources).flatten
-#       end
+      def apib_sourcemap
+        @apib_sourcemap ||= build_structure(@apib_parsed.sourcemap)
+      end
 
+      def apib_structure
+        @apib_structure ||= build_structure(apib)
+      end
+
+      def build_structure(start_point)
+        {}.tap do |hash|
+          hash[:resource_groups] = start_point.resource_groups
+          hash[:resources]       = hash[:resource_groups].map(&:resources).flatten
+          hash[:actions]         = hash[:resources].map(&:actions).flatten
+          hash[:examples]        = hash[:actions].map(&:examples).flatten
+          hash[:responses]       = hash[:examples].map(&:responses).flatten
+        end
+      end
 
       def headers_for_payload(transactional_example, response)
         payload = get_payload(transactional_example, response)

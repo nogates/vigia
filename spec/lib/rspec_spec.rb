@@ -44,12 +44,17 @@ describe Vigia::Rspec do
     before do
       allow(RSpec::Core::Runner).to receive(:run)
       allow(Vigia).to receive(:spec_folder).and_return('spec_folder')
+      allow(subject).to receive(:configure_vigia_rspec)
       subject.run!
     end
 
     it 'calls the rspec to run the spec folder with the right options' do
       expect(RSpec::Core::Runner).to have_received(:run)
         .with(['spec_folder'], 'error output', 'output').once
+    end
+
+    it 'calls the configure_vigia_rspec' do
+      expect(subject).to have_received(:configure_vigia_rspec)
     end
   end
 end
