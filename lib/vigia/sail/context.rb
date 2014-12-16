@@ -78,7 +78,7 @@ module Vigia
 
       def disabled?
         return false unless options[:disable_if]
-        contextual_object(option_name: :disable_if)
+        contextual_object(option_name: :disable_if, context: rspec)
       end
 
       def children
