@@ -8,6 +8,7 @@ module Vigia
           instance.options.each do |name, value|
             instance[name] = context.contextual_object(object: value, context: in_let_context)
           end
+          instance.headers ||= {}
           instance.use_uri_template       if instance.uri_template
           instance.include_config_headers if Vigia.config.headers.any?
           instance
