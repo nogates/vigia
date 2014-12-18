@@ -74,12 +74,14 @@ module Vigia
     end
 
     def context_parent(context, string)
-      string << "  - #{ context[:described_class].group.name } #{ context[:described_class].to_s }"
-      if Vigia::Rspec.adapter.respond_to?(:inspector)
-        info = Vigia::Rspec.adapter.inspector(context[:described_class].described_object)
-        string << wrap(" # #{ Vigia.config.source_file }:#{ info[:line] }", :cyan)
+      unless context[:described_class] == context[:parent_example_group][:described_class]
+        string << "  - #{ context[:described_class].group.name } #{ context[:described_class].to_s }"
+        if Vigia::Rspec.adapter.respond_to?(:inspector)
+          info = Vigia::Rspec.adapter.inspector(context[:described_class].described_object)
+          string << wrap(" # #{ Vigia.config.source_file }:#{ info[:line] }", :cyan)
+        end
+        string << "\n"
       end
-      string << "\n"
       unless context[:parent_example_group][:described_class] == Vigia::Rspec
         string = context_parent(context[:parent_example_group], string)
       end
