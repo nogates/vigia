@@ -118,7 +118,7 @@ Vigia.configure do |config|
 end
 ```
 
-Then, insde your adapter class, you can use the `setup_adater` method to define the groups and contexts that the adapter will provide:
+Then, inside your adapter class, you can use the `setup_adater` method to define the groups and contexts that the adapter will provide:
 
 ```ruby
 
