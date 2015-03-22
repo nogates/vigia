@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Vigia::Adapters::Blueprint do
 
-  include_examples "redsnow doubles"
+  include_examples 'redsnow doubles'
 
   let(:config) do
     instance_double(
@@ -94,6 +94,89 @@ describe Vigia::Adapters::Blueprint do
       it 'loads up the sail contexts' do
          expect(Vigia::Sail::Context.collection.keys)
           .to match_array [ :default ]
+      end
+    end
+  end
+
+  describe '#find_action' do
+    # using cucumber my_blog.apib
+    let(:instance) { described_class.instance }
+
+    let(:blueprint_source) do
+      <<-BPS
+FORMAT: 1A
+HOST: http://myblog.com/
+
+# Example API
+
+# Group Posts
+
+## Posts [#{ resource_template }]
+
+### 1.1.1 Retrieve all s [GET]
+
++ Response 200 (application/json; charset=utf-8)
+
+
+### 1.1.2 Delete a post [DELETE]
+
++ Response 200 (application/json; charset=utf-8)
+      BPS
+    end
+
+    let(:source_file)   { Tempfile.new('bps').tap { |f| f.write(blueprint_source); f.rewind } }
+    let(:resource)      { instance.apib.resource_groups.first.resources.first }
+    let(:get_action)    { resource.actions.first }
+    let(:delete_action) { resource.actions.last }
+
+    before do
+      allow(config).to receive(:source_file)
+        .and_return(source_file.path)
+      described_class.instance
+    end
+
+    context 'when the blueprint defines the url' do
+      let(:resource_template) { '/posts{?page,sort}' }
+
+      it 'returns the action without paramteres' do
+        expect(instance.find_action('http://host.com/posts', :get)).to be(get_action)
+      end
+
+      it 'returns the action with the right parameters' do
+        expect(instance.find_action('http://host.com/posts?page=1&sort=null', :get)).to be(get_action)
+      end
+
+      it 'returns the action with the wrong OPTIONAL parameters' do
+        expect(instance.find_action('http://host.com/posts?nopage=1&sort=null', :get)).to be(get_action)
+      end
+
+      context 'when the require parameters does not match' do
+        let(:resource_template) { '/posts?page' }
+
+        it 'returns nil with the wrong REQUIRE parameters' do
+          expect(instance.find_action('http://host.com/posts?nopage=1&sort=null', :get)).to be_nil
+        end
+      end
+
+      context 'when uses a different method' do
+        it 'returns the right action' do
+          expect(instance.find_action('http://host.com/posts?nopage=1&sort=null', :delete)).to be(delete_action)
+        end
+      end
+
+
+      context 'when there is no action with such method' do
+        it 'returns nil' do
+          expect(instance.find_action('http://host.com/posts?nopage=1&sort=null', :post)).to be_nil
+        end
+      end
+    end
+
+    context 'when the blueprint does not define the url address' do
+      let(:resource_template) { '/pages{?page,sort}' }
+
+      it 'returns nil' do
+        expect(instance.find_action('http://host.com/posts', :get)).to be_nil
       end
     end
   end

@@ -3,11 +3,11 @@ shared_examples "redsnow doubles" do
   let(:resource) do
     instance_double(
       RedSnow::Resource,
-      name: resource_name,
-      description: resource_description,
-      parameters: resource_parameters,
+      name:         resource_name,
+      description:  resource_description,
+      parameters:   resource_parameters,
       uri_template: resource_uri_template,
-      model: resource_model
+      model:        resource_model
     )
   end
 

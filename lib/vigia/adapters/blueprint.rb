@@ -92,7 +92,21 @@ module Vigia
         end
       end
 
+      def find_action(url, method)
+        resources_by_url(url).map(&:actions).flatten.select do|action|
+          action && (method.nil? || action.method.downcase == method.to_s.downcase)
+        end.first
+      end
+
       private
+
+
+      def resources_by_url(url)
+       apib_resources.select do |resource|
+          path = URI.parse(url).path
+          Vigia::Url.template_defines_url?(resource.uri_template, path)
+        end
+      end
 
       def locate_in_sourcemap(key, object)
         node_index  = apib_structure[key].index(object)
@@ -130,6 +144,10 @@ module Vigia
 
       def apib_structure
         @apib_structure ||= build_structure(apib)
+      end
+
+      def apib_resources
+        apib.resource_groups.map(&:resources).flatten
       end
 
       def build_structure(start_point)
