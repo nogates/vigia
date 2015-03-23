@@ -9,7 +9,7 @@ Vigia
 
 <img src="http://singularities.org/vigia.png" width="96" height="96" class="right" alt="Vigia logo" />
 
-Vigia is a gem to perform integration tests using RSpec and a compatible adapter (See [Adapters](#adapters)). The adapter creates the structure of the test (groups and context) and sets up all the variables (See [Context variables](#context-variables)) used to perform the http request.
+Vigia is a gem to perform integration tests using RSpec and a compatible adapter (See [Adapters](https://github.com/lonelyplanet/vigia/wiki/Adapters)). The adapter creates the structure of the test (groups and context) and sets up all the variables (See [Context variables](#context-variables)) used to perform the http request.
 
 These results and expectations objects can be used to run examples that will compare the expected value with the server response value. Vigia allows to use a variety of different ways to execute these comparisons (See [Vigia Examples](#vigia-examples) and [Custom Shared Examples](#custom-shared-examples))
 
