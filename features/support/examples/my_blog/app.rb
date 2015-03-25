@@ -47,9 +47,9 @@ module Vigia
           "http://#{ bind_address }:#{ port }"
         end
 
-#         def self.server_settings
-#            { AccessLog: Logger.new, Logger: Logger.new }
-#         end
+        def self.server_settings
+           { AccessLog: Logger.new, Logger: Logger.new }
+        end
       end
     end
     class Logger
