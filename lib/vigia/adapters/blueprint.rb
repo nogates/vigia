@@ -39,6 +39,7 @@ module Vigia
           description: -> { "Running Response #{ response.name }" }
 
         context :default,
+          contexts: [:required_parameters_only],
           http_client_options: {
             headers:      -> { adapter.headers_for(action, transactional_example, response) },
             method:       -> { action.method },
@@ -51,6 +52,21 @@ module Vigia
             headers: -> { adapter.headers_for(action, transactional_example, response, include_payload = false) },
             body:    -> { response.body }
           }
+
+        # TODO: Tidy up context options. Each one of them should behave as let memos.
+        context :required_parameters_only,
+          examples: [ :code_match, :include_headers ],
+          http_client_options: {
+            headers:      -> { adapter.headers_for(action, transactional_example, response) },
+            method:       -> { action.method },
+            uri_template: -> { resource.uri_template },
+            parameters:   -> { adapter.required_parameters_for(resource, action) },
+            payload:      -> { adapter.payload_for(transactional_example, response) if adapter.with_payload?(action) }
+          },
+          expectations: {
+            code:    -> { response.name.to_i },
+            headers: -> { adapter.headers_for(action, transactional_example, response, include_payload = false) },
+            body:    -> { response.body }          }
       end
 
       def headers_for(action, transactional_example, response, include_payload = true)
@@ -62,6 +78,12 @@ module Vigia
       def parameters_for(resource, action)
         (resource.parameters.collection + action.parameters.collection).each_with_object([]) do |parameter, collection|
           collection << { name: parameter.name, value: parameter.example_value, required: (parameter.use == :required) }
+        end
+      end
+
+      def required_parameters_for(resource, action)
+        parameters_for(resource, action).select do |param|
+          param[:required]
         end
       end
 

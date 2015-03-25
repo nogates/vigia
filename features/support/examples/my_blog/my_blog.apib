@@ -52,7 +52,7 @@ This resource represents a single Post.
 Retrieve a Post.
 
 + Parameters
-    + slug (string, required, `my-awesome-first-post`) ... The unique identifier of the post.
+    + slug (required, string, `my-awesome-first-post`) ... The unique identifier of the post.
 
 + Response 200 (application/json; charset=utf-8)
   + Body
@@ -72,7 +72,7 @@ This resource represents a collection of Post's Comments.
 Retrieve all Comments
 
 + Parameters
-    + post_slug (string, `my-awesome-first-post`) ... Post slug
+    + post_slug (required, string, `my-awesome-first-post`) ... Post slug
     + number (string, `10`) ... Amount of comments to show.
 
 + Response 200 (application/json; charset=utf-8)
@@ -87,7 +87,7 @@ Retrieve all Comments
 Create a Comment
 
 + Parameters
-    + post_slug (string, `my-awesome-first-post`) ... Post slug
+    + post_slug (required, string, `my-awesome-first-post`) ... Post slug
 
 + Request (application/json)
 
@@ -111,7 +111,7 @@ This resource represents a single Comments
 Update a Comment
 
 + Parameters
-    + post_slug (string, `my-awesome-first-post`) ... Post slug
+    + post_slug (string, `my-awesome-first-post`, required) ... Post slug
     + id (required,number,`2`) ... An unique identifier of the Comment.
 
 
@@ -136,7 +136,7 @@ Delete a Comment
 
 + Parameters
     + post_slug (required, string, `my-awesome-first-post`) ... Post slug
-    + id (required,number,`2`) ... An unique identifier of the Comment.
+    + id (required, number,`2`) ... An unique identifier of the Comment.
 
 + Response 204
 

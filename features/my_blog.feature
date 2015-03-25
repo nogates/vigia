@@ -20,12 +20,18 @@ Scenario: Using the blueprint adapter
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
           POST
             Example #0
               Running Response 201
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
         Resource: 1.2 Post
           GET
             Example #0
@@ -33,6 +39,9 @@ Scenario: Using the blueprint adapter
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
       Resource Group: Comments
         Resource: Comments
           GET
@@ -41,12 +50,18 @@ Scenario: Using the blueprint adapter
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
           POST
             Example #0
               Running Response 201
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
         Resource: 2.2 Comment
           PUT
             Example #0
@@ -54,15 +69,21 @@ Scenario: Using the blueprint adapter
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
           DELETE
             Example #0
               Running Response 204
                 context default
                   has the expected HTTP code
                   includes the expected headers
+                  context required_parameters_only
+                    has the expected HTTP code
+                    includes the expected headers
 
     """
-  And the total tests line should equal "14 examples, 0 failures"
+  And the total tests line should equal "28 examples, 0 failures"
   And the error output should be empty
 
 Scenario: Using the blueprint adapter with hooks
@@ -189,7 +210,7 @@ Scenario: Using the blueprint adapter with hooks
                   includes the expected headers
 
     """
-  And the total tests line should equal "48 examples, 0 failures"
+  And the total tests line should equal "69 examples, 0 failures"
   And the error output should be empty
 
 Scenario: Using the blueprint adapter with Vigia::Formatter
@@ -208,7 +229,7 @@ Scenario: Using the blueprint adapter with Vigia::Formatter
   And the output should contain the following:
   """
   Starting Vigia::RSpec
-  .....................
+  ..........................................
   Context `context default` FAILED:
 
    - Example: will fail this example when running comments DELETE
@@ -225,5 +246,5 @@ Scenario: Using the blueprint adapter with Vigia::Formatter
     - resource_group Resource Group: Comments # {SOURCE_FILE}:66
 
   """
-  And the total tests line should equal "21 examples, 1 failure"
+  And the total tests line should equal "42 examples, 2 failures"
   And the error output should be empty

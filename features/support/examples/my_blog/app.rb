@@ -5,6 +5,9 @@ module Vigia
   module Examples
     class MyBlog
       class App < Sinatra::Base
+
+        set :server, 'webrick'
+        
         get '/posts' do
           status 200
           content_type 'application/json; charset=utf-8'
@@ -47,9 +50,9 @@ module Vigia
           "http://#{ bind_address }:#{ port }"
         end
 
-#         def self.server_settings
-#            { AccessLog: Logger.new, Logger: Logger.new }
-#         end
+        def self.server_settings
+           { AccessLog: Logger.new, Logger: Logger.new }
+        end
       end
     end
     class Logger

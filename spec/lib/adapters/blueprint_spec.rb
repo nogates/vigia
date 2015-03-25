@@ -93,7 +93,7 @@ describe Vigia::Adapters::Blueprint do
 
       it 'loads up the sail contexts' do
          expect(Vigia::Sail::Context.collection.keys)
-          .to match_array [ :default ]
+          .to match_array [ :default, :required_parameters_only ]
       end
     end
   end
