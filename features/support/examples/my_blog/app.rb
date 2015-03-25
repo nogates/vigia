@@ -5,6 +5,9 @@ module Vigia
   module Examples
     class MyBlog
       class App < Sinatra::Base
+
+        set :server, 'webrick'
+        
         get '/posts' do
           status 200
           content_type 'application/json; charset=utf-8'
