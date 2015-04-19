@@ -1,10 +1,6 @@
 module Vigia
   class Rspec
     class << self
-      def adapter
-        @@adapter
-      end
-
       def include_shared_folders
         require_custom_examples
         require "#{ __dir__ }/spec/support/utils"
@@ -35,6 +31,7 @@ module Vigia
 
     def set_global_memoizers(rspec)
       instance = adapter
+      self.class.define_singleton_method(:adapter) { instance }
       rspec.let(:client)  { Vigia.config.http_client_class.new(http_client_options) }
       rspec.let(:result)  { client.run }
       rspec.let(:result!) { client.run! }
@@ -42,7 +39,7 @@ module Vigia
     end
 
     def adapter
-      @@adapter ||= Vigia.config.adapter.instance
+      @adapter ||= Vigia.config.adapter.instance
     end
 
     private
