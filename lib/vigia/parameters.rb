@@ -27,7 +27,7 @@ module Vigia
     end
 
     def missing_parameters
-      required_parameters.select{ |k| k[:value].nil? || k[:value].empty? }.map{ |k| k[:name] }
+      required_parameters.select{ |k| k[:value].nil? || k[:value].to_s.empty? }.map{ |k| k[:name] }
     end
   end
 end
