@@ -239,12 +239,43 @@ Scenario: Using the blueprint adapter with Vigia::Formatter
 
 
   Groups:
-    - response Running Response 204 # {SOURCE_FILE}:142
-    - transactional_example Example #0 # {SOURCE_FILE}:142
-    - action DELETE # {SOURCE_FILE}:134
-    - resource Resource: 2.2 Comment # {SOURCE_FILE}:107
-    - resource_group Resource Group: Comments # {SOURCE_FILE}:66
+    - response Running Response 204 # {SOURCE_FILE}:145
+    - transactional_example Example #0 # {SOURCE_FILE}:145
+    - action DELETE # {SOURCE_FILE}:137
+    - resource Resource: 2.2 Comment # {SOURCE_FILE}:110
+    - resource_group Resource Group: Comments # {SOURCE_FILE}:69
 
   """
   And the total tests line should equal "42 examples, 2 failures"
+  And the error output should be empty
+
+
+Scenario: Using the raml adapter
+  Given the server for "my_blog" app is ready
+  Then I configure Vigia with the following options:
+    | source_file      | my_blog/my_blog.raml   |
+    | host             | my_blog.host           |
+    | adapter          | Vigia::Adapters::Raml  |
+  Then I run Vigia
+  And the output should contain the following:
+    """
+
+    Vigia::Rspec
+      Resource: /posts
+        Resource: /{slug}
+          Method: get
+            Response: 200
+              Content type: application/json
+                context default
+                  has the expected HTTP code
+                  includes the expected headers
+        Method: get
+          Response: 200
+            Content type: application/json
+              context default
+                has the expected HTTP code
+                includes the expected headers
+
+    """
+  And the total tests line should equal "6 examples, 0 failures"
   And the error output should be empty

@@ -9,6 +9,8 @@ Then(/^I configure Vigia with the following options:$/) do |config_table|
       elsif name == 'host'
         app, method = value.split('.')
         config.host = @running_apps[app].send(method)
+      elsif name == 'adapter'
+        config.adapter = Object.const_get(value)
       end
     end
 

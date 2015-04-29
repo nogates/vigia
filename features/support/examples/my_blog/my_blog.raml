@@ -1,0 +1,60 @@
+#%RAML 0.8
+
+title: Example API
+baseUri: http://myblog.com/
+mediaType: application/json
+
+/posts:
+  /{slug}:
+    uriParameters:
+      slug:
+        description: Post Id
+        type: string
+        example: my-awesome-first-post
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              schema: |
+                {
+                  "slug"  : "my-awesome-first-post",
+                  "title" : "My awesome first post",
+                  "body"  : "Here is my post. It is a short one!"
+                }
+  get:
+    queryParameters:
+      page:
+        description: Page result number.
+        type: number
+        example: 1
+      sort:
+        description: Attribute to sort by
+        type: string
+        example: name
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              [
+                {
+                  "slug"  : "my-awesome-first-post",
+                  "title" : "My awesome first post",
+                  "body"  : "Here is my post. It is a short one!"
+                }
+              ]
+  post:
+    body:
+      application/json:
+        schema: |
+          {
+            "slug"  : "my-awesome-second-post",
+            "title" : "My awesome second post",
+            "body"  : "Following the first post, here is the second"
+          }
+    responses:
+      201:
+        body:
+          application/json:
+            schema: nil
