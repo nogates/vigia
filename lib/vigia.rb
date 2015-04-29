@@ -1,12 +1,14 @@
 # encoding: utf-8
 
 require 'redsnow'
+require 'raml'
 require 'rspec'
 require 'rest_client'
 require 'addressable/template'
 
 require_relative 'vigia/adapter'
 require_relative 'vigia/adapters/blueprint'
+require_relative 'vigia/adapters/raml'
 require_relative 'vigia/config'
 require_relative 'vigia/hooks'
 require_relative 'vigia/formatter'
@@ -25,21 +27,39 @@ require_relative 'vigia/version'
 
 module Vigia
   class << self
-    def config
-      @config
-    end
+
+    DEFAULT_EXAMPLES_FILE = 'vigia/sail/examples/default.rb'
+
+    attr_reader :config
+
     def configure
-      @config = Vigia::Config.new
-      yield @config
-      @config.apply
+      @config = Vigia::Config.new.tap do |_config|
+        yield _config
+        load_default_examples if _config.load_default_examples
+      end
     end
+
     def spec_folder
       File.join(__dir__, 'vigia', 'spec')
     end
+
     def rspec!
-      Vigia::Rspec.new.run!
+      ensure_config && Vigia::Rspec.new.run!
+    end
+
+    def reset!
+      [ Vigia::Sail::Context, Vigia::Sail::Example, Vigia::Sail::Group ].map(&:clean!)
+      @config = nil
+    end
+
+    private
+
+    def load_default_examples
+      load File.join(__dir__, '/', DEFAULT_EXAMPLES_FILE)
+    end
+
+    def ensure_config
+      (config && config.validate!) || raise('Invalid config')
     end
   end
 end
-
-require_relative 'vigia/sail/examples/default'
