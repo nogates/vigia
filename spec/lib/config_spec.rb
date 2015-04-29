@@ -33,27 +33,13 @@ describe Vigia::Config do
       it 'has an internal_hosts method with the default value' do
         expect(subject.internal_hosts).to eql([])
       end
+      it 'has an load_default_examples with the default value' do
+        expect(subject.load_default_examples).to eql(true)
+      end
     end
   end
 
   describe 'validate!' do
-    context 'validating source_path' do
-      before do
-        allow(subject).to receive(:host).and_return('exists')
-      end
-
-      context 'when @source_file is empty' do
-        it 'raises an error' do
-          expect { subject.validate! }.to raise_error
-        end
-      end
-      context 'when @source_file is not empty' do
-        it 'does not raise an error' do
-          subject.source_file = 'a_path'
-          expect { subject.validate! }.not_to raise_error
-        end
-      end
-    end
     context 'validating host' do
       before do
         allow(subject).to receive(:host).and_return(host)

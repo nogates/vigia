@@ -19,6 +19,7 @@ require_relative 'vigia/parameters'
 require_relative 'vigia/rspec'
 require_relative 'vigia/sail/rspec_object'
 require_relative 'vigia/sail/example'
+require_relative 'vigia/sail/examples/default'
 require_relative 'vigia/sail/context'
 require_relative 'vigia/sail/group'
 require_relative 'vigia/sail/group_instance'
@@ -28,11 +29,10 @@ require_relative 'vigia/version'
 module Vigia
   class << self
 
-    DEFAULT_EXAMPLES_FILE = 'vigia/sail/examples/default.rb'
-
     attr_reader :config
 
     def configure
+      reset!
       @config = Vigia::Config.new.tap do |_config|
         yield _config
         load_default_examples if _config.load_default_examples
@@ -44,7 +44,8 @@ module Vigia
     end
 
     def rspec!
-      ensure_config && Vigia::Rspec.new.run!
+      ensure_config
+      Vigia::Rspec.new.run!
     end
 
     def reset!
@@ -55,7 +56,7 @@ module Vigia
     private
 
     def load_default_examples
-      load File.join(__dir__, '/', DEFAULT_EXAMPLES_FILE)
+      Vigia::Sail::Examples::Default.load!
     end
 
     def ensure_config

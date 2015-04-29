@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe 'Vigia default examples' do
+  before do
+    Vigia::Sail::Examples::Default.load!
+  end
 
   let(:expectations) { double }
   let(:result)       { double }
@@ -27,7 +30,7 @@ describe 'Vigia default examples' do
 
       context 'when the code is not in the range' do
         before do
-          allow(result).to receive(:code).and_return(301)
+          allow(result).to receive(:code).and_return(300..301)
         end
 
         it 'fails' do
