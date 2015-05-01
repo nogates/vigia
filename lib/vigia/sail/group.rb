@@ -15,6 +15,8 @@ module Vigia
           rspec.describe group_instance do
             let(group_instance.group.name) { group_instance.described_object }
 
+            group_instance.group.include_recursion(group_instance.described_object, self)
+
             group_instance.run(self)
           end
         end
@@ -30,6 +32,16 @@ module Vigia
 
       def described_objects
         contextual_object(option_name: :describes) || []
+      end
+
+      def include_recursion(object, rspec_context)
+        describes = contextual_object(option_name: :recursion, context: object) || []
+        return if describes.empty?
+        
+        self.clone.tap do |recursive_group|
+          recursive_group.options[:describes] = describes
+          recursive_group.instance_variable_set('@rspec', rspec_context)
+        end.run
       end
 
       def create_group_instance(object, index)
