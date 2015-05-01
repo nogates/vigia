@@ -10,8 +10,23 @@ describe Vigia::Sail::RSpecObject do
     described_class.new :name, options, rspec_context
   end
 
+  describe '::inherited' do
+    subject do
+      class TemporalKlass < described_class ; end
+      TemporalKlass
+    end
+
+    after do
+      Object.send(:remove_const, :TemporalKlass)
+    end
+
+    it 'has an empty hash as a default collection' do
+      expect(subject.collection).to eql({})
+    end
+  end
+
   describe '::setup_and_run' do
-    let(:collection) { [] }
+    let(:collection) { {} }
 
     before do
       allow(described_class).to receive(:collection).and_return(collection)

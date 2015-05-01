@@ -16,6 +16,14 @@ module Vigia
           instance      = new(name, options, rspec)
           instance.run
         end
+
+        def clean!
+          @collection = {}
+        end
+
+        def inherited(subclass)
+          subclass.instance_variable_set('@collection', {})
+        end
       end
 
       include Vigia::Hooks
