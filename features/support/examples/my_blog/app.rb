@@ -7,40 +7,37 @@ module Vigia
       class App < Sinatra::Base
 
         set :server, 'webrick'
-        
+
+        before do
+          content_type 'application/json'
+        end
+
         get '/posts' do
           status 200
-          content_type 'application/json; charset=utf-8'
           Vigia::Examples::MyBlog::Data['/posts'].to_json
         end
         post '/posts' do
           status 201
-          content_type 'application/json; charset=utf-8'
           Vigia::Examples::MyBlog::Data['/post_create'].to_json
         end
         get '/posts/:post_slug' do
           status 200
-          content_type 'application/json; charset=utf-8'
           Vigia::Examples::MyBlog::Data['/posts/post_1'].to_json
         end
         get '/posts/:post_slug/comments' do
           status 200
-          content_type 'application/json; charset=utf-8'
           Vigia::Examples::MyBlog::Data['/posts/1/comments'].to_json
         end
         post '/posts/:post_slug/comments' do
           status 201
-          content_type 'application/json; charset=utf-8'
           Vigia::Examples::MyBlog::Data['/posts/1/comment_create'].to_json
         end
         put '/posts/:post_slug/comments/:id' do
           status 201
-          content_type 'application/json; charset=utf-8'
           Vigia::Examples::MyBlog::Data['/posts/1/comment_update'].to_json
         end
         delete '/posts/:post_slug/comments/:id' do
           status 204
-          content_type 'application/json; charset=utf-8'
           nil
         end
 

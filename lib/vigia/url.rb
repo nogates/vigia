@@ -17,10 +17,8 @@ module Vigia
 
     attr_reader :uri_template
 
-    # ApiBluprint uses RFC6570 in all its resource's uri_templates
-    # https://github.com/apiaryio/api-blueprint/blob/master/API%20Blueprint%20Specification.md#1-uri-templates
-    def initialize(apib_uri_template)
-      @uri_template = Addressable::Template.new(apib_uri_template)
+    def initialize(template)
+      @uri_template = Addressable::Template.new(template)
     end
 
     def expand(parameters)

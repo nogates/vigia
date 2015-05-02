@@ -1,12 +1,13 @@
 module Vigia
   class Config
     attr_accessor :source_file, :host, :custom_examples_paths, :custom_examples, :headers, :http_client_class
-    attr_accessor :adapter, :hooks, :rspec_config_block, :stderr, :stdout, :internal_hosts
+    attr_accessor :adapter, :hooks, :rspec_config_block, :stderr, :stdout, :internal_hosts, :load_default_examples
 
     def initialize
       @host                  = nil
       @source_file           = nil
       @rspec_config_block    = nil
+      @load_default_examples = true
       @internal_hosts        = []
       @headers               = {}
       @custom_examples_paths = []
@@ -18,13 +19,10 @@ module Vigia
       @http_client_class     = Vigia::HttpClient::RestClient
     end
 
-    def apply
-      validate!
-    end
-
     def validate!
-      raise("You need to provide an source") unless source_file
       raise("You have to provide a host value in config or in the Apib") unless host
+
+      true
     end
 
     def add_custom_examples_on(filter, name)

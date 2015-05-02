@@ -17,14 +17,15 @@ Retrieve all posts.
     + sort (string, `name`) ... Attribute to sort by.
 
 
-+ Response 200 (application/json; charset=utf-8)
++ Response 200 (application/json)
 
-        {
-          "slug"  : "my-awesome-first-post",
-          "title" : "My awesome first post",
-          "body"  : "Here is my post. It is a short one!"
-
-        }
+        [
+          {
+            "slug"  : "my-awesome-first-post",
+            "title" : "My awesome first post",
+            "body"  : "Here is my post. It is a short one!"
+          }
+        ]
 
 ### 1.1.2 Create s [POST]
 Create one posts.
@@ -38,12 +39,14 @@ Create one posts.
           }
         ]
 
-+ Response 201 (application/json; charset=utf-8)
-        {
-          "slug"  : "second-post",
-          "title" : "Second post!!",
-          "body"  : "I am on fire"
-        }
++ Response 201 (application/json)
+        [
+          {
+            "slug"  : "second-post",
+            "title" : "Second post!!",
+            "body"  : "I am on fire"
+          }
+        ]
 
 ## 1.2 Post [/posts/{slug}]
 This resource represents a single Post.
@@ -54,7 +57,7 @@ Retrieve a Post.
 + Parameters
     + slug (required, string, `my-awesome-first-post`) ... The unique identifier of the post.
 
-+ Response 200 (application/json; charset=utf-8)
++ Response 200 (application/json)
   + Body
 
         {
@@ -75,7 +78,7 @@ Retrieve all Comments
     + post_slug (required, string, `my-awesome-first-post`) ... Post slug
     + number (string, `10`) ... Amount of comments to show.
 
-+ Response 200 (application/json; charset=utf-8)
++ Response 200 (application/json)
 
         {
           "title"     : "Lurker",
@@ -96,7 +99,7 @@ Create a Comment
           "body"      : "Not bad,
         }
 
-+ Response 201 (application/json; charset=utf-8)
++ Response 201 (application/json)
 
         {
           "title"     : "Hey yo!",
@@ -122,7 +125,7 @@ Update a Comment
           "body"      : "Updated"
         }
 
-+ Response 201 (application/json; charset=utf-8)
++ Response 201 (application/json)
 
         {
           "title"     : "Hey yo!",

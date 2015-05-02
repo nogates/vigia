@@ -4,4 +4,7 @@ source 'https://rubygems.org'
 gem 'redsnow', github: 'apiaryio/redsnow', submodules: true
 gem 'codeclimate-test-reporter', group: :test, require: nil
 
+# Pull raml from github
+gem 'raml_ruby', github: 'coub/raml_ruby'
+
 gemspec

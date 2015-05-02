@@ -9,9 +9,7 @@ end
 
 Then(/^the output should contain the following:$/) do |text|
   real_text = text.gsub('{SOURCE_FILE}', Vigia::Rspec.adapter.source_file)
-  expect(@vigia_stdout.lines.to_a).to include(*real_text.lines.to_a), -> do
-    "Could not find lines: \n #{ (real_text.lines.to_a - @vigia_stdout.lines.to_a).join("\n") }"
-  end
+  expect(@vigia_stdout).to match_vigia_output(real_text)
 end
 
 Then(/^the total tests line should equal "(.*?)"$/) do |totals_line|
