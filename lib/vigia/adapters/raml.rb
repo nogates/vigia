@@ -34,7 +34,7 @@ module Vigia
 
         context :default,
           http_client_options: {
-            method:        -> { method.name              },
+            method:        -> { method.name },
             uri_template:  -> { adapter.resource_uri_template(method) },
             parameters:    -> { adapter.parameters_for(method) },
             headers:       -> { adapter.request_headers(body) },
@@ -48,10 +48,8 @@ module Vigia
       end
 
       def resource_uri_template(method)
-        method.parent.resource_path.tap do |uri_template|
-          parameters    = method.query_parameters
-          uri_template += "{?#{ parameters.keys.join(',') }" if parameters.any?
-        end
+        uri_template  = method.parent.resource_path
+        uri_template += query_parameters(method)
       end
 
       def parameters_for(method)
@@ -60,16 +58,17 @@ module Vigia
 
       def request_headers(body)
         method = body.parent.parent
-        method.headers.tap do |headers|
+        compile_headers(method.headers).tap do |headers|
           return unless with_payload?(method.name)
           return if     request_body_for(method, body).name == '*/*'
-          headers.merge!(content_type: request_body_for(method, body))
+          headers.merge!(content_type: request_body_for(method, body).name)
         end
       end
 
       def expected_headers(body)
-        body.parent.headers.tap do |headers|
-          headers.merge!(content_type: body.media_type) unless body.media_type == '*/*'
+        compile_headers(body.parent.headers).tap do |headers|
+          # Dont add content_type header if response is 204 (nil response)
+          headers.merge!(content_type: body.media_type) unless body.parent.name == 204 or headers.key?(:content_type)
         end
       end
 
@@ -90,9 +89,22 @@ module Vigia
         end
       end
 
+      def compile_headers(headers)
+        headers.each_with_object({}) do |(key, header), hash|
+          raise "Required header #{ key } does not have an example value" if header.example.nil? && !header.optional
+          hash.merge!(key.to_s.gsub('-', '_').downcase.to_sym => header.example)
+        end
+      end
+
       def request_body_for(method, response_body)
         body = response_body.name == '*/*' ? method.bodies.values.first : method.bodies[response_body.name]
         body ||raise("An example body cannot be found for method #{ method.name } #{ method.parent.resource_path }")
+      end
+
+      def query_parameters(method)
+        method.apply_traits if method.traits.any? # Does this belong here RAML?
+        return '' if method.query_parameters.empty?
+        "{?#{ method.query_parameters.keys.join(',') }}"
       end
     end
   end
