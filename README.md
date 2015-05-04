@@ -9,7 +9,7 @@ Vigia
 
 <img src="http://singularities.org/vigia.png" width="96" height="96" class="right" alt="Vigia logo" />
 
-Vigia is a gem to perform integration tests on an API server using RSpec and a compatible adapter (See [Adapters](https://github.com/lonelyplanet/vigia/wiki/Adapters)). The adapter creates the structure of the test (groups and context) and sets up all the variables (See [Context variables](https://github.com/lonelyplanet/vigia/wiki/Context-variables)) used to perform the http request.
+Vigia is a gem to perform integration tests on an API server using RSpec and a compatible adapter. The adapter creates the structure of the test (groups and context) and sets up all the variables (See [Context variables](https://github.com/lonelyplanet/vigia/wiki/Context-variables)) used to perform the http request.
 
 These results and expectations objects can be used to run examples that will compare the expected value with the server response value. Vigia allows to use a variety of different ways to execute these comparisons (See [Vigia Examples](https://github.com/lonelyplanet/vigia/wiki/Expectations---Examples) and [Custom Shared Examples](https://github.com/lonelyplanet/vigia/wiki/Shared-examples))
 
@@ -57,4 +57,33 @@ namespace :spec do
   end
 end
 ```
+
+# Adapters
+
+Currently, Vigia supports [API Blueprint](https://apiblueprint.org/) and [RAML](http://raml.org/) definition files. By default, Vigia uses the Blueprint Adapter. To configure Vigia to use the RAML adapter, just pass the `adapter` class to the config block
+
+```ruby
+
+Vigia.configure do |config|
+  config.adapter     = Vigia::Adapters::Raml
+  config.source_file = 'my_api_definition.raml'
+  # extra config
+end
+```
+
+(See [Adapters](https://github.com/lonelyplanet/vigia/wiki/Adapters)) to see more information about custom adapters.
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+## License
+
+See [LICENSE](https://raw.githubusercontent.com/lonelyplanet/vigia/master/LICENSE).
+
+
 
