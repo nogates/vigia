@@ -1,7 +1,7 @@
 Vigia
 ========
 
-[![Build Status](https://travis-ci.org/lonelyplanet/vigia.svg?branch=master)](https://travis-ci.org/lonelyplanet/vigia)
+[![Build Status](https://travis-ci.org/nogates/vigia.svg?branch=master)](https://travis-ci.org/nogates/vigia)
 [![Code Climate](https://codeclimate.com/github/nogates/vigia/badges/gpa.svg)](https://codeclimate.com/github/nogates/vigia)
 [![Test Coverage](https://codeclimate.com/github/nogates/vigia/badges/coverage.svg)](https://codeclimate.com/github/nogates/vigia)
 
