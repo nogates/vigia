@@ -19,8 +19,8 @@ describe Vigia do
     context 'when config is nil' do
       let(:config) { nil }
 
-      it 'raises an exception' do
-        expect { described_class.rspec! }.to raise_error
+      it 'raises an RuntimeError' do
+        expect { described_class.rspec! }.to raise_error RuntimeError
       end
     end
 
@@ -30,7 +30,7 @@ describe Vigia do
       end
 
       it 'raises an exception' do
-        expect { described_class.rspec! }.to raise_error
+        expect { described_class.rspec! }.to raise_error RuntimeError
       end
     end
 

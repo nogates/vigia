@@ -20,7 +20,7 @@ describe Vigia::Adapter do
     let(:template) { -> { 'a proc' } }
 
     it 'raises an exception if not block has given' do
-      expect { described_class.setup_adapter('a') }.to raise_error
+      expect { described_class.setup_adapter }.to raise_error RuntimeError
     end
 
     it 'stores the block in the @template variable' do

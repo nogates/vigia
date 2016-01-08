@@ -33,8 +33,9 @@ describe 'Vigia default examples' do
           allow(result).to receive(:code).and_return(300..301)
         end
 
-        it 'fails' do
-          expect { instance_exec(&subject[:expectation]) }.to raise_error
+        it 'fails with the right exception' do
+          expect { instance_exec(&subject[:expectation]) }
+            .to raise_error RSpec::Expectations::ExpectationNotMetError
         end
       end
     end
@@ -58,8 +59,9 @@ describe 'Vigia default examples' do
           allow(result).to receive(:code).and_return(201)
         end
 
-        it 'fails' do
-          expect { instance_exec(&subject[:expectation]) }.to raise_error
+        it 'fails with the right exception' do
+          expect { instance_exec(&subject[:expectation]) }
+            .to raise_error RSpec::Expectations::ExpectationNotMetError
         end
       end
     end
@@ -88,8 +90,9 @@ describe 'Vigia default examples' do
    context 'when the expected headers are not included in the result' do
       let(:result_headers) { { another: 'another content' } }
 
-      it 'fails' do
-        expect { instance_exec(&subject[:expectation]) }.to raise_error
+      it 'fails with the right exception' do
+        expect { instance_exec(&subject[:expectation]) }
+          .to raise_error RSpec::Expectations::ExpectationNotMetError
       end
     end
   end
