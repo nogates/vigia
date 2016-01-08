@@ -49,7 +49,7 @@ describe Vigia::Config do
       context 'when host is nil' do
         let(:host) { nil }
         it 'raises an exception' do
-          expect{ subject.validate! }.to raise_error
+          expect{ subject.validate! }.to raise_error RuntimeError
         end
       end
       context 'when host exists' do

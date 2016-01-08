@@ -144,8 +144,8 @@ describe Vigia::Sail::Example do
     context 'when expectation does not respond to :call' do
       let(:block) { 'a string' }
 
-      it 'raises an exception' do
-        expect { subject.expectation }.to raise_error
+      it 'raises a RuntimeError' do
+        expect { subject.expectation }.to raise_error RuntimeError
       end
     end
   end

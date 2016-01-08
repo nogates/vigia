@@ -28,7 +28,7 @@ describe Vigia::Parameters do
       end
 
       it 'raises an exception' do
-        expect { subject }.to raise_error
+        expect { subject }.to raise_error RuntimeError
       end
     end
 
@@ -38,7 +38,7 @@ describe Vigia::Parameters do
       end
 
       it 'raises an exception' do
-        expect { subject }.to raise_error
+        expect { subject }.to raise_error RuntimeError
       end
     end
   end

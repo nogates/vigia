@@ -1,6 +1,4 @@
-# encoding: utf-8
-
-describe Vigia::Rspec do
+RSpec.describe Vigia::Rspec do
 
   described_class.include_shared_folders
   described_class.new.start_tests(self)
