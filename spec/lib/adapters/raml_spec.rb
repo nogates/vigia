@@ -91,5 +91,13 @@ describe Vigia::Adapters::Raml do
         expect(subject.resource_uri_template(method)).to eql('/posts{?page,sort}')
       end
     end
+
+    context 'when a query parameter contains an hyphen' do
+      let(:parameters) { { :"api-key" => 'The API Key' } }
+
+      it 'returns the resource template with the hyphen encoded' do
+        expect(subject.resource_uri_template(method)).to eql('/posts{?api%2Dkey}')
+      end
+    end
   end
 end

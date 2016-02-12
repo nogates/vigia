@@ -104,7 +104,14 @@ module Vigia
       def query_parameters(method)
         method.apply_traits if method.traits.any? # Does this belong here RAML?
         return '' if method.query_parameters.empty?
-        "{?#{ method.query_parameters.keys.join(',') }}"
+
+        "{?#{ query_string(method) }}"
+      end
+
+      def query_string(method)
+        method.query_parameters.keys.map do |key|
+          key.to_s.gsub('-', '%2D')
+        end.join(',')
       end
     end
   end
