@@ -85,7 +85,11 @@ module Vigia
 
       def format_parameters(raml_hash)
         raml_hash.values.each_with_object([]) do |parameter, array|
-          array << { name: parameter.name, value: parameter.example, required: !parameter.optional }
+          array << {
+            name:     parameter.name.gsub('-', '%2D'),
+            value:    parameter.example,
+            required: !parameter.optional
+          }
         end
       end
 

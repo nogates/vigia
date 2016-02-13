@@ -37,7 +37,7 @@ describe Vigia::Adapters::Raml do
     end
   end
 
-  describe 'expected_headers' do
+  describe '#expected_headers' do
     let(:body)          { double(parent: response) }
     let(:response)      { double(headers: headers, name: response_name) }
     let(:response_name) { 200 }
@@ -60,6 +60,36 @@ describe Vigia::Adapters::Raml do
 
       it 'returns the header with a nil value' do
         expect(subject.expected_headers(body)).to eql(content_type: nil)
+      end
+    end
+  end
+
+  describe '#format_parameters' do
+    let(:method) do
+      instance_double(
+        Raml::Method,
+        parent:           resource,
+        query_parameters: parameters
+      )
+    end
+    let(:resource)          { double(uri_parameters: {}) }
+    let(:parameters)        { {} }
+
+    context 'when the method parameters include an hyphen in the name' do
+      let(:parameters)        { { 'api-key' => api_key_parameter } }
+      let(:api_key_parameter) do
+        instance_double(
+          Raml::Parameter::UriParameter,
+          name:     'api-key',
+          example:  '123',
+          optional: true
+        )
+      end
+
+      it 'formats the paramter name properly' do
+        expect(subject.parameters_for(method)).to eq [
+          { name: 'api%2Dkey', value: '123', required: false }
+        ]
       end
     end
   end
