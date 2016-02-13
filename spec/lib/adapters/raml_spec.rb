@@ -75,21 +75,56 @@ describe Vigia::Adapters::Raml do
     let(:resource)          { double(uri_parameters: {}) }
     let(:parameters)        { {} }
 
-    context 'when the method parameters include an hyphen in the name' do
-      let(:parameters)        { { 'api-key' => api_key_parameter } }
+    context 'when the method parameters includes rfc 3986 chars in the name' do
+      let(:parameters)        { { "api#{ char }key" => api_key_parameter } }
       let(:api_key_parameter) do
         instance_double(
           Raml::Parameter::UriParameter,
-          name:     'api-key',
+          name:     "api#{ char }key",
           example:  '123',
           optional: true
         )
       end
 
-      it 'formats the paramter name properly' do
-        expect(subject.parameters_for(method)).to eq [
-          { name: 'api%2Dkey', value: '123', required: false }
-        ]
+
+      context 'when the char is an hyphen' do
+        let(:char) { '-' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%2Dkey', value: '123', required: false }
+          ]
+        end
+      end
+
+      context 'when the char is a tilde' do
+        let(:char) { '~' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%7Ekey', value: '123', required: false }
+          ]
+        end
+      end
+
+      context 'when the char is a dot' do
+        let(:char) { '.' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%2Ekey', value: '123', required: false }
+          ]
+        end
+      end
+
+      context 'when multiple' do
+        let(:char) { '.~-.' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%2E%7E%2D%2Ekey', value: '123', required: false }
+          ]
+        end
       end
     end
   end
