@@ -37,7 +37,7 @@ describe Vigia::Adapters::Raml do
     end
   end
 
-  describe 'expected_headers' do
+  describe '#expected_headers' do
     let(:body)          { double(parent: response) }
     let(:response)      { double(headers: headers, name: response_name) }
     let(:response_name) { 200 }
@@ -60,6 +60,71 @@ describe Vigia::Adapters::Raml do
 
       it 'returns the header with a nil value' do
         expect(subject.expected_headers(body)).to eql(content_type: nil)
+      end
+    end
+  end
+
+  describe '#format_parameters' do
+    let(:method) do
+      instance_double(
+        Raml::Method,
+        parent:           resource,
+        query_parameters: parameters
+      )
+    end
+    let(:resource)          { double(uri_parameters: {}) }
+    let(:parameters)        { {} }
+
+    context 'when the method parameters includes rfc 3986 chars in the name' do
+      let(:parameters)        { { "api#{ char }key" => api_key_parameter } }
+      let(:api_key_parameter) do
+        instance_double(
+          Raml::Parameter::UriParameter,
+          name:     "api#{ char }key",
+          example:  '123',
+          optional: true
+        )
+      end
+
+
+      context 'when the char is an hyphen' do
+        let(:char) { '-' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%2Dkey', value: '123', required: false }
+          ]
+        end
+      end
+
+      context 'when the char is a tilde' do
+        let(:char) { '~' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%7Ekey', value: '123', required: false }
+          ]
+        end
+      end
+
+      context 'when the char is a dot' do
+        let(:char) { '.' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%2Ekey', value: '123', required: false }
+          ]
+        end
+      end
+
+      context 'when multiple' do
+        let(:char) { '.~-.' }
+
+        it 'formats the paramter name properly' do
+          expect(subject.parameters_for(method)).to eq [
+            { name: 'api%2E%7E%2D%2Ekey', value: '123', required: false }
+          ]
+        end
       end
     end
   end
@@ -89,6 +154,14 @@ describe Vigia::Adapters::Raml do
 
       it 'returns the resource template with the query parameters' do
         expect(subject.resource_uri_template(method)).to eql('/posts{?page,sort}')
+      end
+    end
+
+    context 'when a query parameter contains an hyphen' do
+      let(:parameters) { { :"api-key" => 'The API Key' } }
+
+      it 'returns the resource template with the hyphen encoded' do
+        expect(subject.resource_uri_template(method)).to eql('/posts{?api%2Dkey}')
       end
     end
   end

@@ -85,7 +85,11 @@ module Vigia
 
       def format_parameters(raml_hash)
         raml_hash.values.each_with_object([]) do |parameter, array|
-          array << { name: parameter.name, value: parameter.example, required: !parameter.optional }
+          array << {
+            name:     name_to_rfc_3986(parameter.name),
+            value:    parameter.example,
+            required: !parameter.optional
+          }
         end
       end
 
@@ -104,7 +108,31 @@ module Vigia
       def query_parameters(method)
         method.apply_traits if method.traits.any? # Does this belong here RAML?
         return '' if method.query_parameters.empty?
-        "{?#{ method.query_parameters.keys.join(',') }}"
+
+        "{?#{ query_string(method) }}"
+      end
+
+      # RAML specification for query parameter name must comply with RFC 3986,
+      # However, Vigia uses `addressable` for query parameters expansion, which
+      # enforces RFC 6570. These two specification understand in different ways
+      # what it is consider to be an unreserved character. While RFC 3986 allows
+      # this set: `ALPHA / DIGIT / "-" / "." / "_" / "~"`, RFC 6570 only accepts
+      # `ALPHA / DIGIT / "_", and encoded characters in pct-encoded format `%*`
+      # Thus, the transformation:
+      def name_to_rfc_3986(string)
+        return if string.nil?
+
+        string.gsub(/[-.~]/,
+          '-' => '%2D',
+          '~' => '%7E',
+          '.' => '%2E'
+        )
+      end
+
+      def query_string(method)
+        method.query_parameters.keys.map do |key|
+          name_to_rfc_3986(key.to_s)
+        end.join(',')
       end
     end
   end
