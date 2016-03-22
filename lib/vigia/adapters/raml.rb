@@ -38,7 +38,7 @@ module Vigia
             uri_template:  -> { adapter.resource_uri_template(method) },
             parameters:    -> { adapter.parameters_for(method) },
             headers:       -> { adapter.request_headers(body) },
-            payload:       -> { adapter.payload_for(method, body) if adapter.with_payload?(method.name) }
+            payload:       -> { adapter.payload_for(method, body) }
           },
           expectations: {
              code:    -> { response.name.to_i },
@@ -74,7 +74,9 @@ module Vigia
 
       def payload_for(method, body)
         return unless with_payload?(method.name)
-        request_body_for(method, body).schema.value
+
+        payload = request_body_for(method, body)
+        payload.example || payload.schema.value
       end
 
       def with_payload?(method_name)

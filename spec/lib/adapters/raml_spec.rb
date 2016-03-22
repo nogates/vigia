@@ -129,6 +129,83 @@ describe Vigia::Adapters::Raml do
     end
   end
 
+  describe '#payload_for' do
+    let(:method) do
+      instance_double(
+        Raml::Method,
+        parent: parent,
+        name:   method_name,
+        bodies: bodies
+      )
+    end
+    let(:parent)    { nil }
+    let(:bodies)    { {} }
+    let(:body)      { double(name: body_name) }
+    let(:body_name) { 'body_name' }
+
+    context 'when the method is not :post, :put or :patch' do
+      let(:method_name) { :get }
+
+      it 'returns nil' do
+        expect(subject.payload_for(method, body)).to be nil
+      end
+    end
+
+    context 'when the method is :post, :put or :patch' do
+      let(:method_name) { :post }
+
+      context 'when the method has bodies' do
+        let(:json_body)   { double(example: 'json') }
+        let(:xml_body)    { double(example: 'xml') }
+        let(:bodies) do
+          {
+            'application/json' => json_body,
+            'application/xml'  => xml_body
+          }
+        end
+
+        context 'when the body name is `*/*`' do
+          let(:body_name) { '*/*' }
+
+          it 'returns the first method body' do
+            expect(subject.payload_for(method, body)).to eq 'json'
+          end
+        end
+
+        context 'when the body name is not `*/*`' do
+          let(:body_name) { 'application/xml' }
+
+          it 'returns the proper body' do
+            expect(subject.payload_for(method, body)).to eq 'xml'
+          end
+        end
+
+        context 'when the body example is nil' do
+          let(:body_name) { 'application/xml' }
+          let(:schema)    { double(value: 'xml scheme') }
+          let(:xml_body)  { double(example: nil, schema: schema) }
+
+          it 'returns uses the scheme value' do
+            expect(subject.payload_for(method, body)).to eq 'xml scheme'
+          end
+        end
+      end
+
+      context 'when the method does not have bodies' do
+        let(:body_name) { '*/*' }
+        let(:bodies)    { {} }
+        let(:parent)    { double(resource_path: resource_template) }
+        let(:resource_template) { '/posts' }
+
+
+        it 'raises an exception' do
+          expect { subject.payload_for(method, body) }
+            .to raise_error "An example body cannot be found for method post /posts"
+        end
+      end
+    end
+  end
+
   describe '#resource_uri_template' do
     let(:method) do
       instance_double(
