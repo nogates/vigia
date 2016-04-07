@@ -108,7 +108,7 @@ module Vigia
 
       def request_body_for(method, response_body)
         body = response_body.name == '*/*' ? method.bodies.values.first : method.bodies[response_body.name]
-        raise("An example body cannot be found for method #{ method.name } #{ method.parent.resource_path }") if !body && !optional_payload?(method)
+        raise("An example body cannot be found for method #{ method.name } #{ method.parent.resource_path }") if !body && !optional_payload?(method.name)
         body
       end
 
