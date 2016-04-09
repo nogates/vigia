@@ -143,7 +143,7 @@ describe Vigia::Adapters::Raml do
     let(:body)      { double(name: body_name) }
     let(:body_name) { 'body_name' }
 
-    context 'when the method is not :post, :put or :patch' do
+    context 'when the method is not :post, :put, :patch or :delete' do
       let(:method_name) { :get }
 
       it 'returns nil' do
@@ -151,7 +151,7 @@ describe Vigia::Adapters::Raml do
       end
     end
 
-    context 'when the method is :post, :put or :patch' do
+    context 'when the method is :post, :put, :patch or :delete' do
       let(:method_name) { :post }
 
       context 'when the method has bodies' do
@@ -197,10 +197,19 @@ describe Vigia::Adapters::Raml do
         let(:parent)    { double(resource_path: resource_template) }
         let(:resource_template) { '/posts' }
 
+        context 'when the method is :post, :put or :patch' do
+          it 'raises an exception' do
+            expect { subject.payload_for(method, body) }
+              .to raise_error "An example body cannot be found for method post /posts"
+          end
+        end
 
-        it 'raises an exception' do
-          expect { subject.payload_for(method, body) }
-            .to raise_error "An example body cannot be found for method post /posts"
+        context 'when the method is :delete' do
+          let(:method_name) { :delete }
+
+          it 'returns nil' do
+            expect(subject.payload_for(method, body)).to be nil
+          end
         end
       end
     end

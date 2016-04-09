@@ -76,11 +76,15 @@ module Vigia
         return unless with_payload?(method.name)
 
         payload = request_body_for(method, body)
-        payload.example || payload.schema.value
+        payload ? (payload.example || payload.schema.value) : payload
       end
 
       def with_payload?(method_name)
-        [ :post, :put, :patch ].include?(method_name.to_s.downcase.to_sym)
+        [ :post, :put, :patch, :delete ].include?(method_name.to_s.downcase.to_sym)
+      end
+
+      def optional_payload?(method_name)
+        [ :delete ].include?(method_name.to_s.downcase.to_sym)
       end
 
       private
@@ -104,7 +108,8 @@ module Vigia
 
       def request_body_for(method, response_body)
         body = response_body.name == '*/*' ? method.bodies.values.first : method.bodies[response_body.name]
-        body ||raise("An example body cannot be found for method #{ method.name } #{ method.parent.resource_path }")
+        raise("An example body cannot be found for method #{ method.name } #{ method.parent.resource_path }") if !body && !optional_payload?(method.name)
+        body
       end
 
       def query_parameters(method)
