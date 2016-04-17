@@ -21,5 +21,3 @@ end
 Then(/^the error output should be empty$/) do
   expect(@vigia_stderr).to be_empty
 end
-
-
