@@ -184,6 +184,7 @@ HOST: http://myblog.com/
   describe '#payload_for' do
     context 'when the payload exists' do
       let(:payload_body) { 'The body' }
+
       it 'returns the payload' do
         expect(subject.payload_for(apib_example, response))
           .to eql('The body')
@@ -191,6 +192,7 @@ HOST: http://myblog.com/
     end
 
     context 'when the payload does not exist' do
+      let(:action_method) { 'POST' }
       let(:other_response) do
         instance_double(
           RedSnow::Payload,

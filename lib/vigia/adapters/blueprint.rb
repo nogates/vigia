@@ -45,7 +45,7 @@ module Vigia
             method:       -> { action.method },
             uri_template: -> { resource.uri_template },
             parameters:   -> { adapter.parameters_for(resource, action) },
-            payload:      -> { adapter.payload_for(transactional_example, response) if adapter.with_payload?(action) }
+            payload:      -> { adapter.payload_for(transactional_example, response) if adapter.with_payload?(action.method) }
           },
           expectations: {
             code:    -> { response.name.to_i },
@@ -61,7 +61,7 @@ module Vigia
             method:       -> { action.method },
             uri_template: -> { resource.uri_template },
             parameters:   -> { adapter.required_parameters_for(resource, action) },
-            payload:      -> { adapter.payload_for(transactional_example, response) if adapter.with_payload?(action) }
+            payload:      -> { adapter.payload_for(transactional_example, response) if adapter.with_payload?(action.method) }
           },
           expectations: {
             code:    -> { response.name.to_i },
@@ -71,7 +71,7 @@ module Vigia
 
       def headers_for(action, transactional_example, response, include_payload = true)
         headers  = headers_for_response(response)
-        headers += headers_for_payload(transactional_example, response) if with_payload?(action) && include_payload
+        headers += headers_for_payload(transactional_example, response) if with_payload?(action.method) && include_payload
         compile_headers(headers)
       end
 
@@ -87,13 +87,16 @@ module Vigia
         end
       end
 
-      def with_payload?(action)
-        %w(POST PUT PATCH).include? action.method
-      end
-
       def payload_for(transactional_example, response)
         payload = get_payload(transactional_example, response)
-        payload.body
+
+        if required_payload?(transactional_example.action.method) && payload.nil?
+          raise "Unable to load payload for response #{ response.name }"
+        elsif payload.nil?
+          nil
+        else
+          payload.body
+        end
       end
 
       def inspector object
@@ -184,14 +187,16 @@ module Vigia
 
       def headers_for_payload(transactional_example, response)
         payload = get_payload(transactional_example, response)
+
+        return [] if payload.nil?
+
         [ *payload.headers.collection ].flatten
       end
 
       def get_payload(transactional_example, response)
         index = transactional_example.responses.index(response)
-        transactional_example.requests.fetch(index)
-      rescue => e
-        raise "Unable to load payload for response #{ response.name }"
+
+        index.nil? ? nil : transactional_example.requests.at(index)
       end
     end
   end
