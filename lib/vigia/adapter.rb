@@ -22,6 +22,14 @@ module Vigia
       end
     end
 
+    def with_payload?(method)
+      [ :post, :patch, :put, :delete ].include?(method.to_s.downcase.to_sym)
+    end
+
+    def required_payload?(method)
+      [ :post, :patch, :put ].include?(method.to_s.downcase.to_sym)
+    end
+
     class Structure
       class << self
         def generate(adapter, structure)

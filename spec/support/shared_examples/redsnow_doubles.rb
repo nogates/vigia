@@ -167,8 +167,8 @@ shared_examples "redsnow doubles" do
   end
 
   let(:apib_example) do
-    instance_double(
-      RedSnow::TransactionExample,
+    double(
+      action: action,
       requests: apib_requests,
       responses: apib_responses
     )

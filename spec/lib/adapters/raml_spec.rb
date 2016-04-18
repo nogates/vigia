@@ -151,65 +151,71 @@ describe Vigia::Adapters::Raml do
       end
     end
 
-    context 'when the method is :post, :put, :patch or :delete' do
-      let(:method_name) { :post }
+    [ :post, :patch, :put, :delete ].each do |verb|
+      context "when the method is #{ verb }" do
+        let(:method_name) { verb }
 
-      context 'when the method has bodies' do
-        let(:json_body)   { double(example: 'json') }
-        let(:xml_body)    { double(example: 'xml') }
-        let(:bodies) do
-          {
-            'application/json' => json_body,
-            'application/xml'  => xml_body
-          }
-        end
+        context 'when the method has bodies' do
+          let(:json_body)   { double(example: 'json') }
+          let(:xml_body)    { double(example: 'xml') }
+          let(:bodies) do
+            {
+              'application/json' => json_body,
+              'application/xml'  => xml_body
+            }
+          end
 
-        context 'when the body name is `*/*`' do
-          let(:body_name) { '*/*' }
+          context 'when the body name is `*/*`' do
+            let(:body_name) { '*/*' }
 
-          it 'returns the first method body' do
-            expect(subject.payload_for(method, body)).to eq 'json'
+            it 'returns the first method body' do
+              expect(subject.payload_for(method, body)).to eq 'json'
+            end
+          end
+
+          context 'when the body name is not `*/*`' do
+            let(:body_name) { 'application/xml' }
+
+            it 'returns the proper body' do
+              expect(subject.payload_for(method, body)).to eq 'xml'
+            end
+          end
+
+          context 'when the body example is nil' do
+            let(:body_name) { 'application/xml' }
+            let(:schema)    { double(value: 'xml scheme') }
+            let(:xml_body)  { double(example: nil, schema: schema) }
+
+            it 'returns uses the scheme value' do
+              expect(subject.payload_for(method, body)).to eq 'xml scheme'
+            end
           end
         end
+      end
+    end
 
-        context 'when the body name is not `*/*`' do
-          let(:body_name) { 'application/xml' }
+    context 'when the method does not have bodies' do
+      let(:body_name) { '*/*' }
+      let(:bodies)    { {} }
+      let(:parent)    { double(resource_path: resource_template) }
+      let(:resource_template) { '/posts' }
 
-          it 'returns the proper body' do
-            expect(subject.payload_for(method, body)).to eq 'xml'
-          end
-        end
+      [ :post, :patch, :put ].each do |verb|
+        context "when the method is #{ verb }" do
+          let(:method_name) { verb }
 
-        context 'when the body example is nil' do
-          let(:body_name) { 'application/xml' }
-          let(:schema)    { double(value: 'xml scheme') }
-          let(:xml_body)  { double(example: nil, schema: schema) }
-
-          it 'returns uses the scheme value' do
-            expect(subject.payload_for(method, body)).to eq 'xml scheme'
+          it 'raises an exception' do
+            expect { subject.payload_for(method, body) }
+              .to raise_error "An example body cannot be found for method #{ verb } /posts"
           end
         end
       end
 
-      context 'when the method does not have bodies' do
-        let(:body_name) { '*/*' }
-        let(:bodies)    { {} }
-        let(:parent)    { double(resource_path: resource_template) }
-        let(:resource_template) { '/posts' }
+      context 'when the method is :delete' do
+        let(:method_name) { :delete }
 
-        context 'when the method is :post, :put or :patch' do
-          it 'raises an exception' do
-            expect { subject.payload_for(method, body) }
-              .to raise_error "An example body cannot be found for method post /posts"
-          end
-        end
-
-        context 'when the method is :delete' do
-          let(:method_name) { :delete }
-
-          it 'returns nil' do
-            expect(subject.payload_for(method, body)).to be nil
-          end
+        it 'returns nil' do
+          expect(subject.payload_for(method, body)).to be nil
         end
       end
     end
